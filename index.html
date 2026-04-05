@@ -13,12 +13,9 @@
     <meta property="og:image" content="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Adobe%20Express%20-%20file%20%281%29-EBmI8fcj5imOYOXn8U4SrnfXWvrDBu.png">
     <link rel="icon" href="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Adobe%20Express%20-%20file%20%281%29-EBmI8fcj5imOYOXn8U4SrnfXWvrDBu.png">
     <link rel="apple-touch-icon" href="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Adobe%20Express%20-%20file%20%281%29-EBmI8fcj5imOYOXn8U4SrnfXWvrDBu.png">
-    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://gltkxgvxbbajlbecfkua.supabase.co" crossorigin>
+    <link rel="preconnect" href="https://api.cloudinary.com" crossorigin>
     <title>Royal Perfect - Premium E-Commerce</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -612,6 +609,17 @@
         </div>
     </div>
 
+    <!-- Royal Perfect Story Section -->
+    <div style="max-width: 1600px; margin: 60px auto 40px; padding: 0 20px;">
+        <div style="background: linear-gradient(135deg, var(--secondary) 0%, #0f1428 100%); border: 3px solid var(--gold); border-radius: 12px; padding: 50px 30px; text-align: center;">
+            <h2 style="font-size: 36px; color: var(--gold); margin-bottom: 15px; font-weight: 800;">Explore Royal Perfect Story</h2>
+            <p style="color: var(--text-secondary); font-size: 16px; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">Discover the journey of luxury, elegance, and premium craftsmanship that defines Royal Perfect. Every piece tells a story of passion and excellence.</p>
+            <button onclick="window.location.href='story.html'" style="background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); color: #000; border: none; padding: 15px 35px; border-radius: 8px; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.3s;">
+                ✨ Read Our Story
+            </button>
+        </div>
+    </div>
+
     <div class="footer">
         <div class="footer-content">
             <div class="footer-col">
@@ -624,7 +632,7 @@
             </div>
             <div class="footer-col">
                 <h4>Quick Links</h4>
-                <ul><li>About Us</li><li>Privacy Policy</li><li>FAQs</li></ul>
+                <ul><li onclick="window.location.href='royal-story.html'">📖 Our Story</li><li>About Us</li><li>Privacy Policy</li><li>FAQs</li></ul>
             </div>
         </div>
         <div class="footer-bottom">© 2025 Royal Perfect. All Rights Reserved.</div>
@@ -836,7 +844,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2>⚙️ Admin Panel</h2>
-            <button class="modal-close" onclick="closeAdminModal()">✕</button>
+            <button class="modal-close" onclick="closeAdminModal()">  </button>
         </div>
 
         <!-- Password Gate -->
@@ -862,6 +870,7 @@
                 <button class="tab-btn" onclick="switchAdminTab('links',this)">🔗 Contact</button>
                 <button class="tab-btn" onclick="switchAdminTab('reviews',this)">⭐ Reviews</button>
                 <button class="tab-btn" onclick="switchAdminTab('orders',this)">📋 Orders</button>
+                <button class="tab-btn" onclick="switchAdminTab('story',this)">📖 Story</button>
                 <button class="tab-btn" onclick="switchAdminTab('settings',this)">🔑 Settings</button>
             </div>
 
@@ -941,6 +950,14 @@
             <div id="ordersTab" class="tab-content">
                 <h3 style="color:var(--gold);margin:18px 0 14px;">📋 Customer Orders</h3>
                 <div id="adminOrdersList"></div>
+            </div>
+
+            <!-- STORY TAB -->
+            <div id="storyTab" class="tab-content">
+                <h3 style="color:var(--gold);margin:18px 0 14px;">📖 Manage Royal Perfect Story</h3>
+                <p style="color:var(--text-secondary);margin-bottom:18px;font-size:13px;">Edit story sections and upload images via Cloudinary.</p>
+                <div id="storyList" style="display:grid;gap:14px;"></div>
+                <button class="btn-primary" onclick="addStorySection()" style="margin-top:20px;">➕ Add Story Section</button>
             </div>
 
             <!-- SETTINGS TAB -->
@@ -1034,114 +1051,177 @@
 
 <!-- ==================== SCRIPTS ==================== -->
 <script>
-// ===== FIREBASE CONFIG =====
-const firebaseConfig = {
-    apiKey: "AIzaSyCdAIZPhTGChvV6VwvSurYXpQlMq6S2NCM",
-    authDomain: "royal-perfect-c7fbc.firebaseapp.com",
-    databaseURL: "https://royal-perfect-c7fbc-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "royal-perfect-c7fbc",
-    storageBucket: "royal-perfect-c7fbc.firebasestorage.app",
-    messagingSenderId: "851328862480",
-    appId: "1:851328862480:web:03206378233c27b3f83d95"
-};
+// ===== SUPABASE CONFIG =====
+const SUPABASE_URL = 'https://gltkxgvxbbajlbecfkua.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_GTjjm89NZDSz5IqQjnvnpQ_OSH9vpK_';
 
-let firebaseReady = false, db = null, storage = null, auth = null;
-let isFirebaseConnected = false;
-let reconnectAttempts = 0;
-let reconnectInterval = null;
-let dataPreloaded = false;
-
+// ===== CLOUDINARY CONFIG =====
 const CLOUDINARY_CONFIG = {
-    cloudName: 'royal-perfect',
-    uploadPreset: 'royal_perfect_unsigned',
-    apiUrl: 'https://api.cloudinary.com/v1_1/royal-perfect/image/upload'
+    cloudName: 'ddso5jxzt',
+    uploadPreset: 'product_images',
+    apiUrl: 'https://api.cloudinary.com/v1_1/ddso5jxzt/image/upload'
 };
 
 const BASE_URL = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
 
-// ===== FIREBASE INITIALIZATION WITH AUTO-RECONNECT =====
-function initializeFirebase() {
+// ===== SUPABASE CLIENT =====
+let supabase = null;
+let isSupabaseConnected = false;
+
+function initSupabase() {
     try {
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        db = firebase.database();
-        storage = firebase.storage();
-        auth = firebase.auth();
-        firebaseReady = true;
-        
-        // Enable persistent offline mode
-        db.goOnline();
-        
-        // Connection monitoring with enhanced status
-        db.ref('.info/connected').on('value', snap => {
-            const connected = snap.val() === true;
-            isFirebaseConnected = connected;
-            
-            if (connected) {
-                console.log('[v0] Firebase connected');
-                reconnectAttempts = 0;
-                clearReconnectInterval();
-                updateConnectionStatus('connected');
-                updateSyncStatus('✅ Connected - Realtime Sync Active');
-                
-                // Preload data on first connection
-                if (!dataPreloaded) {
-                    preloadAllData();
-                    dataPreloaded = true;
+        // Minimal Supabase client using fetch
+        supabase = {
+            from: (table) => new SupabaseQuery(table),
+            auth: {
+                signUp: async ({ email, password }) => {
+                    const res = await sbFetch('/auth/v1/signup', 'POST', { email, password });
+                    return res;
+                },
+                signInWithPassword: async ({ email, password }) => {
+                    const res = await sbFetch('/auth/v1/token?grant_type=password', 'POST', { email, password });
+                    if (res.data && res.data.access_token) {
+                        localStorage.setItem('sb_session', JSON.stringify(res.data));
+                    }
+                    return res;
+                },
+                signOut: async () => {
+                    const session = getSbSession();
+                    if (session) await sbFetch('/auth/v1/logout', 'POST', {}, session.access_token);
+                    localStorage.removeItem('sb_session');
+                    return { error: null };
+                },
+                getSession: () => {
+                    const s = getSbSession();
+                    return { data: { session: s }, error: null };
                 }
-            } else {
-                console.log('[v0] Firebase disconnected - attempting reconnection');
-                updateConnectionStatus('disconnected');
-                updateSyncStatus('⚠️ Disconnected - Reconnecting...');
-                startAutoReconnect();
             }
-        });
-        
-        // Server time offset for accurate timestamps
-        db.ref('.info/serverTimeOffset').on('value', snap => {
-            const offset = snap.val() || 0;
-            window.serverTimeOffset = offset;
-        });
-        
+        };
+        isSupabaseConnected = true;
+        updateConnectionStatus('connected');
+        updateSyncStatus('✅ Connected to Supabase');
         return true;
     } catch(e) {
-        console.error('[v0] Firebase init error:', e);
-        firebaseReady = false;
+        console.error('[v0] Supabase init error:', e);
+        isSupabaseConnected = false;
         updateConnectionStatus('error');
         return false;
     }
 }
 
-// ===== AUTO-RECONNECT SYSTEM =====
-function startAutoReconnect() {
-    if (reconnectInterval) return;
-    
-    reconnectInterval = setInterval(() => {
-        if (!isFirebaseConnected && firebaseReady) {
-            reconnectAttempts++;
-            console.log('[v0] Reconnect attempt', reconnectAttempts);
-            updateSyncStatus(`⏳ Connecting... (Attempt ${reconnectAttempts})`);
-            
-            try {
-                db.goOffline();
-                setTimeout(() => {
-                    db.goOnline();
-                }, 500);
-            } catch(e) {
-                console.log('[v0] Reconnect error:', e);
-            }
-        } else if (isFirebaseConnected) {
-            clearReconnectInterval();
-        }
-    }, 2000); // Reconnect every 2 seconds
+function getSbSession() {
+    try { return JSON.parse(localStorage.getItem('sb_session')); } catch(e) { return null; }
 }
 
-function clearReconnectInterval() {
-    if (reconnectInterval) {
-        clearInterval(reconnectInterval);
-        reconnectInterval = null;
+async function sbFetch(path, method = 'GET', body = null, token = null) {
+    const session = getSbSession();
+    const headers = {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${token || (session && session.access_token) || SUPABASE_KEY}`
+    };
+    const opts = { method, headers };
+    if (body && method !== 'GET') opts.body = JSON.stringify(body);
+    try {
+        const res = await fetch(SUPABASE_URL + path, opts);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) return { data: null, error: data };
+        return { data, error: null };
+    } catch(e) {
+        return { data: null, error: e };
     }
+}
+
+class SupabaseQuery {
+    constructor(table) {
+        this.table = table;
+        this._filters = [];
+        this._select = '*';
+        this._order = null;
+        this._limit = null;
+        this._single = false;
+        this._upsert = false;
+    }
+    select(cols) { this._select = cols || '*'; return this; }
+    eq(col, val) { this._filters.push(`${col}=eq.${encodeURIComponent(val)}`); return this; }
+    order(col, { ascending = true } = {}) { this._order = `${col}.${ascending ? 'asc' : 'desc'}`; return this; }
+    limit(n) { this._limit = n; return this; }
+    single() { this._single = true; return this; }
+    async execute() {
+        let url = `/rest/v1/${this.table}?select=${encodeURIComponent(this._select)}`;
+        this._filters.forEach(f => url += `&${f}`);
+        if (this._order) url += `&order=${this._order}`;
+        if (this._limit) url += `&limit=${this._limit}`;
+        const { data, error } = await sbFetch(url, 'GET');
+        if (error) return { data: null, error };
+        const rows = Array.isArray(data) ? data : (data ? [data] : []);
+        return { data: this._single ? (rows[0] || null) : rows, error: null };
+    }
+    async insert(row, opts = {}) {
+        const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': opts.upsert ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal' };
+        const session = getSbSession();
+        if (session) headers['Authorization'] = `Bearer ${session.access_token}`;
+        try {
+            const res = await fetch(SUPABASE_URL + `/rest/v1/${this.table}`, { method: opts.upsert ? 'POST' : 'POST', headers, body: JSON.stringify(Array.isArray(row) ? row : [row]) });
+            if (!res.ok) { const e = await res.json().catch(() => ({})); return { data: null, error: e }; }
+            return { data: null, error: null };
+        } catch(e) { return { data: null, error: e }; }
+    }
+    async upsert(row) { return this.insert(row, { upsert: true }); }
+    async update(updates) {
+        let url = `/rest/v1/${this.table}?`;
+        this._filters.forEach((f,i) => url += (i>0?'&':'')+f);
+        const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' };
+        const session = getSbSession();
+        if (session) headers['Authorization'] = `Bearer ${session.access_token}`;
+        try {
+            const res = await fetch(SUPABASE_URL + url, { method: 'PATCH', headers, body: JSON.stringify(updates) });
+            if (!res.ok) { const e = await res.json().catch(() => ({})); return { data: null, error: e }; }
+            return { data: null, error: null };
+        } catch(e) { return { data: null, error: e }; }
+    }
+    async delete() {
+        let url = `/rest/v1/${this.table}?`;
+        this._filters.forEach((f,i) => url += (i>0?'&':'')+f);
+        const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' };
+        const session = getSbSession();
+        if (session) headers['Authorization'] = `Bearer ${session.access_token}`;
+        try {
+            const res = await fetch(SUPABASE_URL + url, { method: 'DELETE', headers });
+            if (!res.ok) { const e = await res.json().catch(() => ({})); return { data: null, error: e }; }
+            return { data: null, error: null };
+        } catch(e) { return { data: null, error: e }; }
+    }
+    then(resolve, reject) { return this.execute().then(resolve, reject); }
+}
+
+// Convenience helpers
+async function sbGet(table, filters = {}) {
+    let url = `/rest/v1/${table}?select=*`;
+    Object.entries(filters).forEach(([k, v]) => url += `&${k}=eq.${encodeURIComponent(v)}`);
+    const { data, error } = await sbFetch(url);
+    return error ? [] : (Array.isArray(data) ? data : []);
+}
+async function sbInsert(table, row) {
+    const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' };
+    const session = getSbSession();
+    if (session) headers['Authorization'] = `Bearer ${session.access_token}`;
+    const res = await fetch(SUPABASE_URL + `/rest/v1/${table}`, { method: 'POST', headers, body: JSON.stringify(Array.isArray(row) ? row : [row]) });
+    return res.ok;
+}
+async function sbUpdate(table, idCol, idVal, updates) {
+    const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' };
+    const session = getSbSession();
+    if (session) headers['Authorization'] = `Bearer ${session.access_token}`;
+    const res = await fetch(SUPABASE_URL + `/rest/v1/${table}?${idCol}=eq.${encodeURIComponent(idVal)}`, { method: 'PATCH', headers, body: JSON.stringify(updates) });
+    return res.ok;
+}
+async function sbDelete(table, idCol, idVal) {
+    const headers = { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Prefer': 'return=minimal' };
+    const session = getSbSession();
+    if (session) headers['Authorization'] = `Bearer ${session.access_token}`;
+    const res = await fetch(SUPABASE_URL + `/rest/v1/${table}?${idCol}=eq.${encodeURIComponent(idVal)}`, { method: 'DELETE', headers });
+    return res.ok;
 }
 
 // ===== CONNECTION STATUS UI =====
@@ -1150,140 +1230,87 @@ function updateConnectionStatus(status) {
     const statusText = document.getElementById('connectionStatusText');
     const bar = document.getElementById('connectionBar');
     const indicatorBox = document.getElementById('connectionIndicatorBox');
-    
-    if (bar) {
-        bar.classList.remove('connected', 'connecting', 'disconnected');
-        bar.classList.add(status);
-    }
-    
+    if (bar) { bar.classList.remove('connected','connecting','disconnected'); bar.classList.add(status); }
     if (indicator && statusText) {
         switch(status) {
             case 'connected':
-                indicator.style.background = '#31a24c';
-                indicator.style.animation = 'none';
-                statusText.textContent = 'Connected';
-                statusText.style.color = '#31a24c';
+                indicator.style.background = '#31a24c'; indicator.style.animation = 'none';
+                statusText.textContent = 'Connected'; statusText.style.color = '#31a24c';
                 if (indicatorBox) indicatorBox.style.borderColor = '#31a24c';
-                // Hide indicator after 3 seconds when connected
-                setTimeout(() => {
-                    if (isFirebaseConnected && indicatorBox) {
-                        indicatorBox.style.opacity = '0.3';
-                    }
-                }, 3000);
+                setTimeout(() => { if (indicatorBox) indicatorBox.style.opacity = '0.3'; }, 3000);
                 break;
             case 'connecting':
-                indicator.style.background = '#ff9500';
-                indicator.style.animation = 'pulse 1s infinite';
-                statusText.textContent = 'Connecting...';
-                statusText.style.color = '#ff9500';
-                if (indicatorBox) {
-                    indicatorBox.style.borderColor = '#ff9500';
-                    indicatorBox.style.opacity = '1';
-                }
+                indicator.style.background = '#ff9500'; indicator.style.animation = 'pulse 1s infinite';
+                statusText.textContent = 'Connecting...'; statusText.style.color = '#ff9500';
+                if (indicatorBox) { indicatorBox.style.borderColor = '#ff9500'; indicatorBox.style.opacity = '1'; }
                 break;
             case 'disconnected':
-                indicator.style.background = '#ff3333';
-                indicator.style.animation = 'pulse 1s infinite';
-                statusText.textContent = 'Disconnected';
-                statusText.style.color = '#ff3333';
-                if (indicatorBox) {
-                    indicatorBox.style.borderColor = '#ff3333';
-                    indicatorBox.style.opacity = '1';
-                }
+                indicator.style.background = '#ff3333'; indicator.style.animation = 'pulse 1s infinite';
+                statusText.textContent = 'Disconnected'; statusText.style.color = '#ff3333';
+                if (indicatorBox) { indicatorBox.style.borderColor = '#ff3333'; indicatorBox.style.opacity = '1'; }
                 break;
             case 'error':
-                indicator.style.background = '#ff3333';
-                indicator.style.animation = 'none';
-                statusText.textContent = 'Error';
-                statusText.style.color = '#ff3333';
-                if (indicatorBox) {
-                    indicatorBox.style.borderColor = '#ff3333';
-                    indicatorBox.style.opacity = '1';
-                }
+                indicator.style.background = '#ff3333'; indicator.style.animation = 'none';
+                statusText.textContent = 'Error'; statusText.style.color = '#ff3333';
+                if (indicatorBox) { indicatorBox.style.borderColor = '#ff3333'; indicatorBox.style.opacity = '1'; }
                 break;
         }
     }
 }
 
-// ===== PRELOAD DATA FOR FAST LOADING =====
+// ===== PRELOAD DATA =====
 async function preloadAllData() {
-    if (!firebaseReady || !db) return;
-    
-    console.log('[v0] Preloading all data...');
-    const startTime = Date.now();
-    
     try {
-        // Parallel data fetching for speed
-        const [productsSnap, reviewsSnap, ordersSnap, usersSnap, contactSnap, categoriesSnap, settingsSnap] = await Promise.all([
-            db.ref('products').once('value'),
-            db.ref('reviews').once('value'),
-            db.ref('orders').once('value'),
-            db.ref('users').once('value'),
-            db.ref('contactLinks').once('value'),
-            db.ref('categories').once('value'),
-            db.ref('settings').once('value')
+        updateConnectionStatus('connecting');
+        const [products, reviews, orders, users, contact, cats, settings] = await Promise.all([
+            sbGet('products'),
+            sbGet('reviews'),
+            sbGet('orders'),
+            sbGet('users'),
+            sbGet('contact_links'),
+            sbGet('categories'),
+            sbGet('settings')
         ]);
-        
-        // Process products
-        if (productsSnap.exists()) {
-            allProducts = Object.keys(productsSnap.val()).map(k => ({...productsSnap.val()[k], id: k}));
+
+        if (products.length) {
+            allProducts = products.map(p => ({
+                ...p,
+                images: tryParse(p.images, []),
+                videos: tryParse(p.videos, [])
+            }));
         }
-        
-        // Process reviews
-        if (reviewsSnap.exists()) {
-            allReviews = Object.keys(reviewsSnap.val()).map(k => ({...reviewsSnap.val()[k], id: k}));
-        }
-        
-        // Process orders
-        if (ordersSnap.exists()) {
-            allOrders = Object.keys(ordersSnap.val()).map(k => ({...ordersSnap.val()[k], id: k}));
-        }
-        
-        // Process users
-        if (usersSnap.exists()) {
-            allUsers = Object.keys(usersSnap.val()).map(k => ({...usersSnap.val()[k], id: k}));
-        }
-        
-        // Process contact links
-        if (contactSnap.exists()) {
-            contactLinks = contactSnap.val();
-            updateSocialLinks();
-            updateFooterContact();
-        }
-        
-        // Process categories
-        if (categoriesSnap.exists()) {
-            categories = Object.keys(categoriesSnap.val()).map(k => ({...categoriesSnap.val()[k], id: k}));
-            renderCategories();
-        }
-        
-        // Process settings
-        if (settingsSnap.exists()) {
-            const s = settingsSnap.val();
-            if (s.itemsPerPage) itemsPerPage = s.itemsPerPage;
-            if (s.bannerVideoUrl) {
-                document.getElementById('videoSource').src = s.bannerVideoUrl;
+        if (reviews.length) allReviews = reviews.map(r => ({ ...r, media: tryParse(r.media, []) }));
+        if (orders.length) allOrders = orders.map(o => ({ ...o, items: tryParse(o.items, []) }));
+        if (users.length) allUsers = users;
+        if (contact.length) { contactLinks = contact[0]; updateSocialLinks(); updateFooterContact(); }
+        if (cats.length) { categories = cats; renderCategories(); }
+        if (settings.length) {
+            const s = settings[0];
+            if (s.items_per_page) itemsPerPage = s.items_per_page;
+            if (s.banner_video_url) {
+                document.getElementById('videoSource').src = s.banner_video_url;
                 document.getElementById('bannerVideo').load();
             }
-            if (s.adminPassword) adminPassword = s.adminPassword;
+            if (s.admin_password) adminPassword = s.admin_password;
         }
-        
-        // Display products
+
         displayPaginatedProducts();
-        
-        const loadTime = Date.now() - startTime;
-        console.log(`[v0] Data preloaded in ${loadTime}ms`);
-        
-        // Check URL for product
+        updateConnectionStatus('connected');
+        updateSyncStatus('✅ Connected to Supabase');
+        loadStoryData();
         checkProductUrlParam();
-        
     } catch(e) {
         console.error('[v0] Preload error:', e);
+        loadLocalData();
+        updateConnectionStatus('error');
     }
 }
 
-// Initialize Firebase immediately
-initializeFirebase();
+function tryParse(val, fallback) {
+    if (Array.isArray(val)) return val;
+    if (typeof val === 'string') { try { return JSON.parse(val); } catch(e) { return fallback; } }
+    return fallback;
+}
 
 // ===== APP STATE =====
 let allProducts = [];
@@ -1300,25 +1327,25 @@ let itemsPerPage = 9;
 let totalPages = 1;
 let filteredProducts = [];
 let currentCategory = 'all';
-let adminPassword = 'prakashrosy21'; // synced from firebase
+let adminPassword = 'prakashrosy21';
 
 // Gallery state
-let galleryItems = []; // {type: 'image'|'video', url: ''}
+let galleryItems = [];
 let galleryIndex = 0;
 let galleryTouchStartX = 0;
 
-// Swipe gesture system (global navigation & product gallery)
+// Swipe gesture system
 let touchStartX = 0, touchStartY = 0, touchEndX = 0, touchEndY = 0;
 let pageHistory = ['homePage'];
 let currentPageIndex = 0;
 let isAnimating = false;
 
 // Admin media staging
-let newProductImages = []; // array of {file, dataUrl, cloudUrl}
-let newProductVideos = []; // array of {file, dataUrl, cloudUrl}
+let newProductImages = [];
+let newProductVideos = [];
 let editProductImages = [];
 let editProductVideos = [];
-let reviewMediaFiles = []; // for review upload
+let reviewMediaFiles = [];
 
 let categories = [
     { id: 'earings', name: 'Earings', icon: '💎' },
@@ -1335,89 +1362,50 @@ let categories = [
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', function() {
-    // Set initial connection status
     updateConnectionStatus('connecting');
-    
-    if (firebaseReady && db) {
-        setupFirebaseListeners();
-    } else {
-        loadLocalData();
-        updateConnectionStatus('error');
-    }
-    // Setup global swipe system for page navigation
+    initSupabase();
+    preloadAllData();
     setupGlobalSwipeGestures();
     updateCartBadge();
     renderCategories();
     renderProducts();
     loadCurrentUser();
     updateSocialLinks();
-    
-    // Setup lazy loading for fast initial render
     setupLazyLoading();
 });
 
 // ===== GLOBAL SWIPE GESTURE SYSTEM =====
 function setupGlobalSwipeGestures() {
-    document.addEventListener('touchstart', e => {
-        touchStartX = e.changedTouches[0].screenX;
-        touchStartY = e.changedTouches[0].screenY;
-    }, false);
-    
-    document.addEventListener('touchend', e => {
-        touchEndX = e.changedTouches[0].screenX;
-        touchEndY = e.changedTouches[0].screenY;
-        detectSwipe();
-    }, false);
+    document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; touchStartY = e.changedTouches[0].screenY; }, false);
+    document.addEventListener('touchend', e => { touchEndX = e.changedTouches[0].screenX; touchEndY = e.changedTouches[0].screenY; detectSwipe(); }, false);
 }
-
 function detectSwipe() {
     const diffX = touchStartX - touchEndX;
     const diffY = touchStartY - touchEndY;
-    
-    // Only register swipe if horizontal movement > vertical movement
-    if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (Math.abs(diffX) > 50) { // Minimum 50px swipe
-            if (diffX > 0) {
-                // Swiped LEFT - go to next page (if applicable)
-            } else {
-                // Swiped RIGHT - go back to previous page
-                swipeBack();
-            }
-        }
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+        if (diffX < 0) swipeBack();
     }
 }
-
 function swipeBack() {
     if (isAnimating || currentPageIndex === 0) return;
     isAnimating = true;
-    
     const pages = document.querySelectorAll('.page');
-    const currentPage = Array.from(pages).find(p => p.classList.contains('active'));
-    
-    // Get previous page from history
+    const curPage = Array.from(pages).find(p => p.classList.contains('active'));
     if (pageHistory.length > 1) {
         pageHistory.pop();
         const prevPageId = pageHistory[pageHistory.length - 1];
         const prevPage = document.getElementById(prevPageId);
-        
         if (prevPage) {
-            // Smooth animation
-            currentPage.style.animation = 'slideOutRight 0.4s ease';
+            curPage.style.animation = 'slideOutRight 0.4s ease';
             prevPage.style.animation = 'slideInLeft 0.4s ease';
-            
             setTimeout(() => {
-                currentPage.classList.remove('active');
-                currentPage.style.animation = '';
-                prevPage.classList.add('active');
-                prevPage.style.animation = '';
-                isAnimating = false;
-                clearProductUrl();
+                curPage.classList.remove('active'); curPage.style.animation = '';
+                prevPage.classList.add('active'); prevPage.style.animation = '';
+                isAnimating = false; clearProductUrl();
             }, 400);
         }
     }
 }
-
-// Add slide animations to CSS dynamically
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
@@ -1432,6 +1420,8 @@ function checkProductUrlParam() {
     const params = new URLSearchParams(window.location.search);
     const pid = params.get('product');
     if (pid) waitForProducts(pid);
+    // Handle #admin hash for admin access
+    if (window.location.hash === '#admin') { setTimeout(() => openAdminModal(), 500); }
 }
 function waitForProducts(pid) {
     const iv = setInterval(() => {
@@ -1447,12 +1437,6 @@ function showErrorPage() {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('errorPage').classList.add('active');
     hideStickyOrderBtn();
-}
-function handlePopState() {
-    const params = new URLSearchParams(window.location.search);
-    const pid = params.get('product');
-    if (pid) { const p = allProducts.find(x => x.id === pid); if (p) viewProduct(pid, false); }
-    else goHome(false);
 }
 function generateProductLink(id) { return BASE_URL + '?product=' + id; }
 function updateUrlForProduct(id) { window.history.pushState({productId:id}, '', window.location.pathname + '?product=' + id); }
@@ -1475,100 +1459,6 @@ function observeLazyImages() {
     if (window.imageObserver) document.querySelectorAll('img.lazy-image').forEach(img => window.imageObserver.observe(img));
 }
 
-// ===== FIREBASE LISTENERS =====
-function setupFirebaseListeners() {
-    // Products - realtime sync
-    db.ref('products').on('value', snap => {
-        allProducts = snap.exists() ? Object.keys(snap.val()).map(k => ({...snap.val()[k], id:k})) : [];
-        displayPaginatedProducts();
-        console.log('[v0] Products synced:', allProducts.length);
-    }, err => console.error('[v0] Products listener error:', err));
-    
-    // Reviews - realtime sync
-    db.ref('reviews').on('value', snap => {
-        allReviews = snap.exists() ? Object.keys(snap.val()).map(k => ({...snap.val()[k], id:k})) : [];
-        console.log('[v0] Reviews synced:', allReviews.length);
-    }, err => console.error('[v0] Reviews listener error:', err));
-    
-    // Orders - realtime sync
-    db.ref('orders').on('value', snap => {
-        allOrders = snap.exists() ? Object.keys(snap.val()).map(k => ({...snap.val()[k], id:k})) : [];
-        console.log('[v0] Orders synced:', allOrders.length);
-    }, err => console.error('[v0] Orders listener error:', err));
-    
-    // Users - realtime sync
-    db.ref('users').on('value', snap => {
-        allUsers = snap.exists() ? Object.keys(snap.val()).map(k => ({...snap.val()[k], id:k})) : [];
-        console.log('[v0] Users synced:', allUsers.length);
-    }, err => console.error('[v0] Users listener error:', err));
-    
-    // Contact links - realtime sync
-    db.ref('contactLinks').on('value', snap => {
-        if (snap.exists()) { 
-            contactLinks = snap.val(); 
-            updateSocialLinks(); 
-            updateFooterContact(); 
-        }
-    }, err => console.error('[v0] ContactLinks listener error:', err));
-    
-    // Categories - realtime sync
-    db.ref('categories').on('value', snap => {
-        if (snap.exists()) { 
-            categories = Object.keys(snap.val()).map(k => ({...snap.val()[k], id:k})); 
-            renderCategories(); 
-        }
-    }, err => console.error('[v0] Categories listener error:', err));
-    
-    // Settings - realtime sync
-    db.ref('settings').on('value', snap => {
-        if (snap.exists()) {
-            const s = snap.val();
-            if (s.itemsPerPage) itemsPerPage = s.itemsPerPage;
-            if (s.bannerVideoUrl) { 
-                document.getElementById('videoSource').src = s.bannerVideoUrl; 
-                document.getElementById('bannerVideo').load(); 
-            }
-            if (s.adminPassword) adminPassword = s.adminPassword;
-        }
-    }, err => console.error('[v0] Settings listener error:', err));
-    
-    // Pages - realtime sync for dynamic pages
-    db.ref('pages').on('value', snap => {
-        if (snap.exists()) {
-            const pages = snap.val();
-            // Handle dynamic page content updates
-            console.log('[v0] Pages synced');
-        }
-    }, err => console.error('[v0] Pages listener error:', err));
-    
-    // Social links - realtime sync
-    db.ref('socialLinks').on('value', snap => {
-        if (snap.exists()) {
-            const links = snap.val();
-            if (links.gmail) contactLinks.gmail = links.gmail;
-            if (links.whatsapp) contactLinks.whatsapp = links.whatsapp;
-            if (links.insta) contactLinks.insta = links.insta;
-            if (links.youtube) contactLinks.youtube = links.youtube;
-            updateSocialLinks();
-            updateFooterContact();
-        }
-    }, err => console.error('[v0] SocialLinks listener error:', err));
-    
-    updateSyncStatus('✅ Connected to Firebase - Realtime Sync Active');
-    console.log('[v0] All Firebase listeners initialized');
-}
-function setupLazyLoading() {
-    if (!('IntersectionObserver' in window)) return;
-    const imgObserver = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                if (img.dataset.src) { img.src = img.dataset.src; img.classList.add('loaded'); obs.unobserve(img); }
-            }
-        });
-    }, {rootMargin:'50px'});
-    document.querySelectorAll('img[data-src]').forEach(img => imgObserver.observe(img));
-}
 function loadLocalData() {
     allProducts = [
         { id:'1', name:'✨ Gold Pendant', actualPrice:3000, offerPrice:2500, category:'chains', description:'Premium 18K gold pendant.', images:[], videos:[], image:'https://via.placeholder.com/400x700?text=Gold+Pendant', avgRating:5 },
@@ -1598,16 +1488,126 @@ function updateFooterContact() {
     if (fwa) fwa.textContent = `📱 WhatsApp: +${wa}`;
     if (fe) fe.textContent = `📧 Email: ${gmail}`;
 }
-function saveContactLinks() {
+async function saveContactLinks() {
     const gmail = document.getElementById('gmailEmail').value || 'royalperfect2002@gmail.com';
     const whatsapp = document.getElementById('whatsappNumber').value || '918220390911';
     const insta = document.getElementById('instaUrl').value || 'https://instagram.com';
     const youtube = document.getElementById('youtubeUrl').value || 'https://youtube.com';
-    contactLinks = {gmail, whatsapp, insta, youtube};
-    if (firebaseReady && db) db.ref('contactLinks').set(contactLinks).then(() => showNotification('✅ Contact settings saved!'));
-    updateSocialLinks();
-    updateFooterContact();
+    contactLinks = { gmail, whatsapp, insta, youtube };
+    if (isSupabaseConnected) {
+        // Upsert contact_links (use id=1 as single row)
+        await sbFetch('/rest/v1/contact_links?id=eq.1', 'PATCH', { gmail, whatsapp, insta, youtube });
+    }
+    updateSocialLinks(); updateFooterContact();
     showNotification('✅ Settings saved!');
+}
+
+// ===== STORY MANAGEMENT =====
+let allStoryS = [];
+
+async function loadStoryData() {
+    try {
+        const data = await sbFetch('/rest/v1/website_content?order=section_order.asc');
+        allStoryS = data || [];
+        renderStoryList();
+    } catch (e) {
+        console.error('[v0] Story load error:', e);
+        showNotification('❌ Failed to load story');
+    }
+}
+
+function renderStoryList() {
+    const list = document.getElementById('storyList');
+    if (!allStoryS.length) {
+        list.innerHTML = '<p style="color:var(--text-secondary);font-size:13px;">No story sections yet. Add one to get started.</p>';
+        return;
+    }
+    
+    list.innerHTML = allStoryS.map((s, i) => `
+        <div style="background:var(--secondary);border:1px solid var(--border);border-radius:8px;padding:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div>
+                    <h4 style="color:var(--gold);margin-bottom:4px;">${s.title || 'Untitled Section'}</h4>
+                    <p style="color:var(--text-secondary);font-size:11px;">Order: ${s.section_order || i+1}</p>
+                </div>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn-primary" style="padding:6px 12px;font-size:11px;" onclick="editStorySection('${s.id}')">✏️ Edit</button>
+                    <button style="background:#d32f2f;border:none;color:white;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:11px;" onclick="deleteStorySection('${s.id}')">🗑️ Delete</button>
+                </div>
+            </div>
+            ${s.image_url ? `<img src="${s.image_url}" style="width:100%;height:150px;object-fit:cover;border-radius:6px;margin-bottom:10px;">` : ''}
+            <p style="color:var(--text-secondary);font-size:12px;line-height:1.6;">${(s.content || 'No content').substring(0, 100)}...</p>
+        </div>
+    `).join('');
+}
+
+function editStorySection(id) {
+    const section = allStoryS.find(s => s.id === id);
+    if (!section) return;
+    
+    const title = prompt('Section Title:', section.title);
+    if (title === null) return;
+    
+    const content = prompt('Section Content:', section.content);
+    if (content === null) return;
+    
+    const order = prompt('Section Order:', section.section_order || 1);
+    if (order === null) return;
+    
+    saveStorySection(id, title, content, parseInt(order), section.image_url);
+}
+
+function addStorySection() {
+    const title = prompt('Section Title:');
+    if (!title) return;
+    
+    const content = prompt('Section Content:');
+    if (!content) return;
+    
+    const order = prompt('Section Order:', allStoryS.length + 1);
+    if (!order) return;
+    
+    saveStorySection(null, title, content, parseInt(order), null);
+}
+
+async function saveStorySection(id, title, content, order, imageUrl) {
+    if (!isSupabaseConnected) {
+        showNotification('❌ Supabase not connected');
+        return;
+    }
+    
+    try {
+        if (id) {
+            // Update existing
+            await sbFetch(`/rest/v1/website_content?id=eq.${id}`, 'PATCH', { title, content, section_order: order, image_url: imageUrl });
+        } else {
+            // Insert new
+            await sbFetch('/rest/v1/website_content', 'POST', { title, content, section_order: order, image_url: imageUrl });
+        }
+        showNotification('✅ Story section saved!');
+        loadStoryData();
+    } catch (e) {
+        console.error('[v0] Save story error:', e);
+        showNotification('❌ Failed to save story section');
+    }
+}
+
+async function deleteStorySection(id) {
+    if (!confirm('Are you sure you want to delete this section?')) return;
+    
+    if (!isSupabaseConnected) {
+        showNotification('❌ Supabase not connected');
+        return;
+    }
+    
+    try {
+        await sbFetch(`/rest/v1/website_content?id=eq.${id}`, 'DELETE');
+        showNotification('✅ Section deleted!');
+        loadStoryData();
+    } catch (e) {
+        console.error('[v0] Delete story error:', e);
+        showNotification('❌ Failed to delete section');
+    }
 }
 
 // ===== CATEGORIES =====
@@ -1631,39 +1631,50 @@ function updateCategoryDropdowns() {
         if (v) sel.value = v;
     });
 }
-function addCategory() {
+async function addCategory() {
     const name = document.getElementById('newCategoryName').value.trim();
     const icon = document.getElementById('newCategoryIcon').value.trim() || '📁';
     const file = document.getElementById('newCategoryIconUpload').files[0];
     if (!name) { showNotification('❌ Enter category name'); return; }
     const catId = 'cat_' + Date.now();
-    const save = (cat) => { categories.push(cat); if (firebaseReady && db) db.ref('categories/'+cat.id).set(cat); renderCategories(); loadCategoriesAdmin(); showNotification('✅ Category added!'); };
+    const save = async (cat) => {
+        categories.push(cat);
+        if (isSupabaseConnected) await sbInsert('categories', { id: cat.id, name: cat.name, icon: cat.icon, icon_data: cat.iconData || null });
+        renderCategories(); loadCategoriesAdmin(); showNotification('✅ Category added!');
+    };
     if (file) { const r = new FileReader(); r.onload = e => save({id:catId,name,icon,iconData:e.target.result}); r.readAsDataURL(file); }
     else save({id:catId,name,icon});
     document.getElementById('newCategoryName').value = '';
     document.getElementById('newCategoryIcon').value = '';
     document.getElementById('newCategoryIconUpload').value = '';
 }
-function deleteCategory(id) {
+async function deleteCategory(id) {
     if (!confirm('Delete category?')) return;
     categories = categories.filter(c => c.id !== id);
-    if (firebaseReady && db) db.ref('categories/'+id).remove();
+    if (isSupabaseConnected) await sbDelete('categories', 'id', id);
     renderCategories(); loadCategoriesAdmin(); showNotification('✅ Deleted!');
 }
-function editCategory(id) {
+async function editCategory(id) {
     const c = categories.find(x => x.id === id); if (!c) return;
     const n = prompt('Edit category name:', c.name);
-    if (n && n.trim()) { c.name = n.trim(); if (firebaseReady && db) db.ref('categories/'+id).set(c); renderCategories(); loadCategoriesAdmin(); showNotification('✅ Updated!'); }
+    if (n && n.trim()) {
+        c.name = n.trim();
+        if (isSupabaseConnected) await sbUpdate('categories', 'id', id, { name: c.name });
+        renderCategories(); loadCategoriesAdmin(); showNotification('✅ Updated!');
+    }
 }
-function editCategoryIcon(id) {
+async function editCategoryIcon(id) {
     const c = categories.find(x => x.id === id); if (!c) return;
     const n = prompt('Enter new emoji icon:', c.icon);
-    if (n) { c.icon = n; if (firebaseReady && db) db.ref('categories/'+id).set(c); renderCategories(); loadCategoriesAdmin(); showNotification('✅ Icon updated!'); }
+    if (n) {
+        c.icon = n;
+        if (isSupabaseConnected) await sbUpdate('categories', 'id', id, { icon: n });
+        renderCategories(); loadCategoriesAdmin(); showNotification('✅ Icon updated!');
+    }
 }
-function restoreDefaultCategories() {
+async function restoreDefaultCategories() {
     if (!confirm('Restore default categories?')) return;
     categories = [{id:'earings',name:'Earings',icon:'💎'},{id:'bangles',name:'Bangles',icon:'⭕'},{id:'clips',name:'Clips',icon:'📎'},{id:'hairbands',name:'Hair Bands',icon:'🎀'},{id:'rings',name:'Rings',icon:'💍'},{id:'chains',name:'Chains',icon:'⛓️'},{id:'bracelets',name:'Bracelets',icon:'📿'},{id:'fancyitems',name:'Fancy Items',icon:'✨'},{id:'trendingitems',name:'Trending Items',icon:'🔥'},{id:'allitems',name:'All Items',icon:'🛍️'}];
-    if (firebaseReady && db) { const obj = {}; categories.forEach(c => obj[c.id]=c); db.ref('categories').set(obj); }
     renderCategories(); loadCategoriesAdmin(); showNotification('✅ Defaults restored!');
 }
 function loadCategoriesAdmin() {
@@ -1676,11 +1687,7 @@ function loadCategoriesAdmin() {
 }
 
 // ===== PRODUCTS DISPLAY =====
-function renderProducts() {
-    // Initial render - will be called again with Firebase data
-    displayPaginatedProducts();
-}
-
+function renderProducts() { displayPaginatedProducts(); }
 function displayPaginatedProducts() {
     let src = allProducts;
     if (currentCategory !== 'all') src = allProducts.filter(p => p.category === currentCategory);
@@ -1694,17 +1701,18 @@ function displayProducts(products) {
     const grid = document.getElementById('productsGrid');
     if (!products || !products.length) { grid.innerHTML = '<div style="color:var(--text-secondary);padding:60px 20px;text-align:center;grid-column:1/-1;">No products found</div>'; return; }
     grid.innerHTML = products.map(p => {
-        const hasOffer = p.actualPrice && p.offerPrice && p.actualPrice > p.offerPrice;
-        const price = p.offerPrice || p.price || 0;
+        const hasOffer = p.actual_price && p.offer_price && p.actual_price > p.offer_price;
+        const actualPrice = p.actual_price || p.actualPrice || 0;
+        const price = p.offer_price || p.offerPrice || p.price || 0;
         const imgUrl = getCoverImage(p);
         return `<div class="product-item" onclick="viewProduct('${p.id}')">
             <div class="product-image" style="background-image:url('${imgUrl}');"></div>
             <div class="product-body">
                 <div class="product-name">${p.name}</div>
-                <div class="product-rating">${'★'.repeat(Math.min(5,Math.round(p.avgRating||5)))}${'☆'.repeat(5-Math.min(5,Math.round(p.avgRating||5)))}</div>
+                <div class="product-rating">${'★'.repeat(Math.min(5,Math.round(p.avg_rating||p.avgRating||5)))}${'☆'.repeat(5-Math.min(5,Math.round(p.avg_rating||p.avgRating||5)))}</div>
                 <div class="product-price-container">
-                    ${hasOffer?`<span class="product-actual-price">₹${p.actualPrice.toLocaleString()}</span>`:''}
-                    <span class="product-offer-price">₹${price.toLocaleString()}</span>
+                    ${hasOffer?`<span class="product-actual-price">₹${Number(actualPrice).toLocaleString()}</span>`:''}
+                    <span class="product-offer-price">₹${Number(price).toLocaleString()}</span>
                 </div>
                 <div class="product-buttons">
                     <button class="btn-add-cart" onclick="event.stopPropagation();addToCart('${p.id}')">Add</button>
@@ -1716,15 +1724,23 @@ function displayProducts(products) {
     observeLazyImages();
 }
 function getCoverImage(p) {
-    if (p.images && p.images.length > 0) return p.images[0].url || p.images[0];
-    return p.cloudinaryUrl || p.image || 'https://via.placeholder.com/400x700?text=No+Image';
+    const imgs = tryParse(p.images, []);
+    if (imgs.length > 0) return imgs[0].url || imgs[0];
+    return p.image1 || p.cloudinaryUrl || p.image || 'https://via.placeholder.com/400x700?text=No+Image';
 }
 function getProductMedia(p) {
-    // Build gallery items: images first, then videos
     let items = [];
-    if (p.images && p.images.length > 0) p.images.forEach(img => items.push({type:'image', url: img.url||img}));
-    else if (p.image) items.push({type:'image', url: p.cloudinaryUrl||p.image});
-    if (p.videos && p.videos.length > 0) p.videos.forEach(v => items.push({type:'video', url: v.url||v}));
+    const imgs = tryParse(p.images, []);
+    const vids = tryParse(p.videos, []);
+    if (imgs.length > 0) imgs.forEach(img => items.push({type:'image', url: img.url||img}));
+    else {
+        if (p.image1) items.push({type:'image', url: p.image1});
+        if (p.image2) items.push({type:'image', url: p.image2});
+        if (p.image3) items.push({type:'image', url: p.image3});
+        if (p.image4) items.push({type:'image', url: p.image4});
+        if (!items.length && p.image) items.push({type:'image', url: p.image});
+    }
+    if (vids.length > 0) vids.forEach(v => items.push({type:'video', url: v.url||v}));
     if (!items.length) items.push({type:'image', url:'https://via.placeholder.com/400x700?text=No+Image'});
     return items;
 }
@@ -1753,7 +1769,7 @@ function applyFilters() {
     const sel = [];
     for (let i=1;i<=9;i++) if (document.getElementById('price'+i).checked) sel.push(ranges[i-1]);
     if (!sel.length) { currentCategory='all'; currentPage=1; displayPaginatedProducts(); return; }
-    filteredProducts = allProducts.filter(p => { const pr=p.offerPrice||p.price||0; return sel.some(r=>pr>=r[0]&&pr<r[1]); });
+    filteredProducts = allProducts.filter(p => { const pr=p.offer_price||p.offerPrice||p.price||0; return sel.some(r=>pr>=r[0]&&pr<r[1]); });
     totalPages = Math.ceil(filteredProducts.length/itemsPerPage)||1;
     currentPage=1;
     displayProducts(filteredProducts.slice(0,itemsPerPage));
@@ -1768,18 +1784,18 @@ function viewProduct(id, updateUrl=true) {
     if (!p) { showErrorPage(); return; }
 
     document.getElementById('detailName').textContent = p.name;
-    const hasOffer = p.actualPrice && p.offerPrice && p.actualPrice > p.offerPrice;
-    const price = p.offerPrice || p.price || 0;
-    document.getElementById('detailActualPrice').textContent = hasOffer ? `₹${p.actualPrice.toLocaleString()}` : '';
-    document.getElementById('detailPrice').textContent = `₹${price.toLocaleString()}`;
-    const stars = Math.min(5, Math.round(p.avgRating||5));
+    const actualPrice = p.actual_price || p.actualPrice || 0;
+    const price = p.offer_price || p.offerPrice || p.price || 0;
+    const hasOffer = actualPrice && price && actualPrice > price;
+    document.getElementById('detailActualPrice').textContent = hasOffer ? `₹${Number(actualPrice).toLocaleString()}` : '';
+    document.getElementById('detailPrice').textContent = `₹${Number(price).toLocaleString()}`;
+    const stars = Math.min(5, Math.round(p.avg_rating||p.avgRating||5));
     document.getElementById('detailRating').innerHTML = '★'.repeat(stars)+'☆'.repeat(5-stars)+` (${stars}.0/5)`;
     document.getElementById('detailDesc').textContent = p.description || '';
 
-    const link = p.productLink || generateProductLink(id);
+    const link = p.product_link || generateProductLink(id);
     document.getElementById('productShareLink').value = link;
 
-    // Build 9:16 gallery
     galleryItems = getProductMedia(p);
     galleryIndex = 0;
     renderGallery();
@@ -1817,7 +1833,6 @@ function renderGallery() {
     count.textContent = `1 / ${galleryItems.length}`;
     updateGalleryPosition();
 
-    // Touch swipe
     wrapper.ontouchstart = e => { galleryTouchStartX = e.touches[0].clientX; };
     wrapper.ontouchend = e => {
         const dx = galleryTouchStartX - e.changedTouches[0].clientX;
@@ -1828,9 +1843,8 @@ function updateGalleryPosition() {
     document.getElementById('mediaGalleryTrack').style.transform = `translateX(-${galleryIndex*100}%)`;
     document.querySelectorAll('.media-dot').forEach((d,i) => d.classList.toggle('active', i===galleryIndex));
     document.getElementById('galleryCount').textContent = `${galleryIndex+1} / ${galleryItems.length}`;
-    // Pause all videos when sliding
     document.querySelectorAll('.media-slide video').forEach((v,i) => {
-        if (i !== galleryIndex) { v.pause(); document.getElementById('slide_'+i).classList.remove('playing'); document.getElementById('playOverlay_'+i) && document.getElementById('playOverlay_'+i).style && (document.getElementById('playOverlay_'+i).style.opacity=''); }
+        if (i !== galleryIndex) { v.pause(); document.getElementById('slide_'+i).classList.remove('playing'); const o = document.getElementById('playOverlay_'+i); if (o) o.style.opacity = ''; }
     });
 }
 function galleryNextSlide() { if (galleryIndex < galleryItems.length-1) { galleryIndex++; updateGalleryPosition(); } }
@@ -1842,29 +1856,14 @@ function toggleVideoPlay(video, idx) {
     const slide = document.getElementById('slide_'+idx);
     const overlay = document.getElementById('playOverlay_'+idx);
     if (!video) return;
-    
     if (video.paused) {
-        // Pause all others
         document.querySelectorAll('.media-slide video').forEach(v => v.pause());
         document.querySelectorAll('.media-slide').forEach(s => s.classList.remove('playing'));
-        
-        // Set video attributes for smooth playback
-        video.controls = false;
-        video.preload = 'auto';
-        video.crossOrigin = 'anonymous';
-        
-        // Play with error handling
-        const playPromise = video.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(err => {
-                console.log('[v0] Video play error:', err);
-                setTimeout(() => video.play().catch(() => {}), 300);
-            });
-        }
-        
+        video.controls = false; video.preload = 'auto'; video.crossOrigin = 'anonymous';
+        const pp = video.play();
+        if (pp !== undefined) pp.catch(err => { setTimeout(() => video.play().catch(() => {}), 300); });
         slide.classList.add('playing');
         if (overlay) overlay.style.opacity = '0';
-        video.ontouchstart = () => { if (!video.paused && overlay) overlay.style.opacity = overlay.style.opacity==='0'?'1':'0'; };
         video.addEventListener('ended', () => { slide.classList.remove('playing'); if (overlay) overlay.style.opacity='1'; }, {once:true});
     } else {
         video.pause(); slide.classList.remove('playing'); if (overlay) overlay.style.opacity='1';
@@ -1879,12 +1878,12 @@ function loadRelatedProducts(category, currentId) {
     if (!related.length) { grid.innerHTML = '<div style="color:var(--text-secondary);padding:20px;">No related products</div>'; return; }
     grid.innerHTML = related.map(p => {
         const img = getCoverImage(p);
-        const price = p.offerPrice || p.price || 0;
+        const price = p.offer_price || p.offerPrice || p.price || 0;
         return `<div class="product-item" onclick="viewProduct('${p.id}')" style="cursor:pointer;">
             <div class="product-image" style="background-image:url('${img}');"></div>
             <div class="product-body" style="padding:10px;">
                 <div class="product-name" style="font-size:12px;">${p.name}</div>
-                <div class="product-offer-price" style="font-size:15px;">₹${price.toLocaleString()}</div>
+                <div class="product-offer-price" style="font-size:15px;">₹${Number(price).toLocaleString()}</div>
             </div>
         </div>`;
     }).join('');
@@ -1894,65 +1893,16 @@ function loadRelatedProducts(category, currentId) {
 function showStickyOrderBtn() { const b=document.getElementById('stickyOrderBtn'); if(b&&window.innerWidth<=768) b.style.display='block'; }
 function hideStickyOrderBtn() { const b=document.getElementById('stickyOrderBtn'); if(b) b.style.display='none'; }
 
-// ===== FIREBASE STORAGE UPLOAD =====
-async function uploadToFirebaseStorage(file, path) {
-    if (!firebaseReady || !storage) {
-        console.log('[v0] Firebase Storage not available, falling back to Cloudinary');
-        return await uploadToCloudinary(file);
-    }
-    
-    try {
-        const timestamp = Date.now();
-        const fileName = `${path}/${timestamp}_${file.name}`;
-        const storageRef = storage.ref(fileName);
-        
-        // Upload with progress tracking
-        const uploadTask = storageRef.put(file);
-        
-        return new Promise((resolve, reject) => {
-            uploadTask.on('state_changed',
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log('[v0] Upload progress:', progress.toFixed(0) + '%');
-                },
-                (error) => {
-                    console.error('[v0] Firebase Storage upload error:', error);
-                    // Fallback to Cloudinary
-                    uploadToCloudinary(file).then(resolve).catch(reject);
-                },
-                async () => {
-                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                    console.log('[v0] Firebase Storage upload complete:', downloadURL);
-                    resolve(downloadURL);
-                }
-            );
-        });
-    } catch (e) {
-        console.error('[v0] Firebase Storage error:', e);
-        return await uploadToCloudinary(file);
-    }
-}
-
 // ===== CLOUDINARY UPLOAD =====
 async function uploadToCloudinary(file) {
     const fd = new FormData();
     fd.append('file', file);
     fd.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
     fd.append('cloud_name', CLOUDINARY_CONFIG.cloudName);
-    
-    // Add optimization for videos
     const isVideo = file.type.startsWith('video/');
-    if (isVideo) {
-        fd.append('quality', 'auto:good');
-        fd.append('fetch_format', 'auto');
-    } else {
-        // Image optimization
-        fd.append('quality', 'auto');
-        fd.append('fetch_format', 'auto');
-    }
-    
+    if (!isVideo) { fd.append('quality', 'auto'); fd.append('fetch_format', 'auto'); }
     try {
-        const res = await fetch(CLOUDINARY_CONFIG.apiUrl, {method:'POST',body:fd});
+        const res = await fetch(CLOUDINARY_CONFIG.apiUrl, {method:'POST', body:fd});
         const data = await res.json();
         if (data.secure_url) {
             if (isVideo) return data.secure_url;
@@ -2047,22 +1997,10 @@ function removeVideoSlot(idx, prefix, isEdit) {
     arr.splice(idx,1);
     renderAdminVideoSlots(isEdit?'editVideoGrid':'adminVideoGrid', arr, prefix, isEdit);
 }
-function addMoreImageSlot() {
-    newProductImages.push({file:null,dataUrl:'',cloudUrl:''});
-    renderAdminImageSlots('adminImageGrid', newProductImages, 'newImg', false);
-}
-function addMoreVideoSlot() {
-    newProductVideos.push({file:null,dataUrl:'',cloudUrl:''});
-    renderAdminVideoSlots('adminVideoGrid', newProductVideos, 'newVid', false);
-}
-function addMoreEditImageSlot() {
-    editProductImages.push({file:null,dataUrl:'',cloudUrl:''});
-    renderAdminImageSlots('editImageGrid', editProductImages, 'editImg', true);
-}
-function addMoreEditVideoSlot() {
-    editProductVideos.push({file:null,dataUrl:'',cloudUrl:''});
-    renderAdminVideoSlots('editVideoGrid', editProductVideos, 'editVid', true);
-}
+function addMoreImageSlot() { newProductImages.push({file:null,dataUrl:'',cloudUrl:''}); renderAdminImageSlots('adminImageGrid', newProductImages, 'newImg', false); }
+function addMoreVideoSlot() { newProductVideos.push({file:null,dataUrl:'',cloudUrl:''}); renderAdminVideoSlots('adminVideoGrid', newProductVideos, 'newVid', false); }
+function addMoreEditImageSlot() { editProductImages.push({file:null,dataUrl:'',cloudUrl:''}); renderAdminImageSlots('editImageGrid', editProductImages, 'editImg', true); }
+function addMoreEditVideoSlot() { editProductVideos.push({file:null,dataUrl:'',cloudUrl:''}); renderAdminVideoSlots('editVideoGrid', editProductVideos, 'editVid', true); }
 
 // ===== ADD PRODUCT =====
 async function addProduct() {
@@ -2077,45 +2015,57 @@ async function addProduct() {
     const productId = 'prod_' + Date.now();
     const productLink = generateProductLink(productId);
 
-    // Upload images
+    // Upload images to Cloudinary
     const uploadedImages = [];
     for (let img of newProductImages) {
         if (!img.file && !img.dataUrl) continue;
         let url = img.dataUrl;
-        if (img.file) {
-            try { url = await uploadToCloudinary(img.file); } catch(e) { url = img.dataUrl; }
-        }
+        if (img.file) { try { url = await uploadToCloudinary(img.file); } catch(e) { url = img.dataUrl; } }
         uploadedImages.push({url});
     }
-
-    // Upload videos
+    // Upload videos to Cloudinary
     const uploadedVideos = [];
     for (let vid of newProductVideos) {
         if (!vid.file && !vid.dataUrl) continue;
         let url = vid.dataUrl;
-        if (vid.file) {
-            try { url = await uploadToCloudinary(vid.file); } catch(e) { url = vid.dataUrl; }
-        }
+        if (vid.file) { try { url = await uploadToCloudinary(vid.file); } catch(e) { url = vid.dataUrl; } }
         uploadedVideos.push({url});
     }
 
-    const coverImage = uploadedImages.length > 0 ? uploadedImages[0].url : 'https://via.placeholder.com/400x700?text='+encodeURIComponent(name);
+    const coverImage = uploadedImages.length > 0 ? uploadedImages[0].url : '';
+    const img1 = uploadedImages[0]?.url || '';
+    const img2 = uploadedImages[1]?.url || '';
+    const img3 = uploadedImages[2]?.url || '';
+    const img4 = uploadedImages[3]?.url || '';
 
     const product = {
-        id:productId, name, actualPrice:actualPrice||offerPrice, offerPrice, price:offerPrice,
-        category, description:desc, image:coverImage, cloudinaryUrl:coverImage,
-        images:uploadedImages, videos:uploadedVideos, productLink, avgRating:5,
-        createdAt:new Date().toISOString()
+        id: productId, name,
+        actual_price: actualPrice||offerPrice,
+        offer_price: offerPrice, price: offerPrice,
+        category, description: desc,
+        image: coverImage, image1: img1, image2: img2, image3: img3, image4: img4,
+        images: JSON.stringify(uploadedImages),
+        videos: JSON.stringify(uploadedVideos),
+        product_link: productLink, avg_rating: 5,
+        created_at: new Date().toISOString()
     };
 
-    saveProductToFirebase(product);
+    if (isSupabaseConnected) {
+        const ok = await sbInsert('products', product);
+        if (ok) {
+            allProducts.push({...product, images: uploadedImages, videos: uploadedVideos});
+            displayPaginatedProducts();
+            showNotification('✅ Product added successfully!');
+        } else {
+            showNotification('❌ Error saving product. Check database.');
+        }
+    } else {
+        allProducts.push({...product, images: uploadedImages, videos: uploadedVideos});
+        displayPaginatedProducts();
+        showNotification('✅ Product added (local mode)!');
+    }
     clearProductForm();
-    showNotification('✅ Product added successfully!');
-}
-
-function saveProductToFirebase(product) {
-    if (firebaseReady && db) { db.ref('products/'+product.id).set(product); }
-    else { allProducts.push(product); displayPaginatedProducts(); }
+    loadAdminData();
 }
 
 function clearProductForm() {
@@ -2134,19 +2084,18 @@ function openEditProduct(id) {
     const p = allProducts.find(x => x.id===id); if (!p) return;
     document.getElementById('editProductId').value = id;
     document.getElementById('editProductName').value = p.name;
-    document.getElementById('editProductActualPrice').value = p.actualPrice||p.price||0;
-    document.getElementById('editProductOfferPrice').value = p.offerPrice||p.price||0;
+    document.getElementById('editProductActualPrice').value = p.actual_price||p.actualPrice||p.price||0;
+    document.getElementById('editProductOfferPrice').value = p.offer_price||p.offerPrice||p.price||0;
     document.getElementById('editProductCategory').value = p.category;
     document.getElementById('editProductDescription').value = p.description||'';
 
-    // Load existing images into edit slots
-    editProductImages = (p.images && p.images.length > 0) ?
-        p.images.map(img => ({file:null, dataUrl:img.url||img, cloudUrl:img.url||img})) :
-        p.image ? [{file:null, dataUrl:p.image, cloudUrl:p.image}] : [];
-    // Pad to 4
+    const imgs = tryParse(p.images, []);
+    editProductImages = imgs.length > 0 ?
+        imgs.map(img => ({file:null, dataUrl:img.url||img, cloudUrl:img.url||img})) :
+        (p.image1 ? [{file:null,dataUrl:p.image1,cloudUrl:p.image1}] : []);
     while (editProductImages.length < 4) editProductImages.push({file:null,dataUrl:'',cloudUrl:''});
-    editProductVideos = (p.videos && p.videos.length > 0) ?
-        p.videos.map(v => ({file:null, dataUrl:v.url||v, cloudUrl:v.url||v})) : [];
+    const vids = tryParse(p.videos, []);
+    editProductVideos = vids.length > 0 ? vids.map(v => ({file:null, dataUrl:v.url||v, cloudUrl:v.url||v})) : [];
 
     renderAdminImageSlots('editImageGrid', editProductImages, 'editImg', true);
     renderAdminVideoSlots('editVideoGrid', editProductVideos, 'editVid', true);
@@ -2159,16 +2108,15 @@ async function saveProductEdit() {
     const p = allProducts.find(x => x.id===id); if (!p) return;
 
     p.name = document.getElementById('editProductName').value;
-    p.actualPrice = parseInt(document.getElementById('editProductActualPrice').value)||0;
-    p.offerPrice = parseInt(document.getElementById('editProductOfferPrice').value)||0;
-    p.price = p.offerPrice;
+    p.actual_price = parseInt(document.getElementById('editProductActualPrice').value)||0;
+    p.offer_price = parseInt(document.getElementById('editProductOfferPrice').value)||0;
+    p.price = p.offer_price;
     p.category = document.getElementById('editProductCategory').value;
     p.description = document.getElementById('editProductDescription').value;
-    if (!p.productLink) p.productLink = generateProductLink(id);
+    if (!p.product_link) p.product_link = generateProductLink(id);
 
     showNotification('⏳ Saving changes...');
 
-    // Upload new/changed images
     const uploadedImages = [];
     for (let img of editProductImages) {
         if (!img.dataUrl && !img.cloudUrl) continue;
@@ -2180,7 +2128,6 @@ async function saveProductEdit() {
             uploadedImages.push({url: img.cloudUrl||img.dataUrl});
         }
     }
-
     const uploadedVideos = [];
     for (let vid of editProductVideos) {
         if (!vid.dataUrl && !vid.cloudUrl) continue;
@@ -2193,20 +2140,34 @@ async function saveProductEdit() {
         }
     }
 
-    if (uploadedImages.length > 0) { p.images = uploadedImages; p.image = uploadedImages[0].url; p.cloudinaryUrl = uploadedImages[0].url; }
+    if (uploadedImages.length > 0) {
+        p.images = uploadedImages;
+        p.image = uploadedImages[0].url;
+        p.image1 = uploadedImages[0]?.url || '';
+        p.image2 = uploadedImages[1]?.url || '';
+        p.image3 = uploadedImages[2]?.url || '';
+        p.image4 = uploadedImages[3]?.url || '';
+    }
     if (uploadedVideos.length > 0) p.videos = uploadedVideos;
 
-    saveProductToFirebase(p);
-    closeEditProduct();
-    loadAdminData();
+    if (isSupabaseConnected) {
+        await sbUpdate('products', 'id', id, {
+            name: p.name, actual_price: p.actual_price, offer_price: p.offer_price, price: p.price,
+            category: p.category, description: p.description,
+            image: p.image||'', image1: p.image1||'', image2: p.image2||'', image3: p.image3||'', image4: p.image4||'',
+            images: JSON.stringify(p.images||[]), videos: JSON.stringify(p.videos||[])
+        });
+    }
+    displayPaginatedProducts();
+    closeEditProduct(); loadAdminData();
     showNotification('✅ Product updated!');
 }
 
-function deleteProduct(id) {
+async function deleteProduct(id) {
     if (!confirm('Delete product?')) return;
     allProducts = allProducts.filter(p => p.id!==id);
-    allReviews = allReviews.filter(r => r.productId!==id);
-    if (firebaseReady && db) { db.ref('products/'+id).remove(); }
+    allReviews = allReviews.filter(r => r.product_id!==id && r.productId!==id);
+    if (isSupabaseConnected) await sbDelete('products', 'id', id);
     displayPaginatedProducts(); loadAdminData(); showNotification('✅ Product deleted!');
 }
 
@@ -2230,10 +2191,8 @@ function previewReviewMedia(event) {
         reader.onload = e => {
             const div = document.createElement('div');
             div.className = 'media-upload-preview';
-            div.innerHTML = isVideo ?
-                `<video src="${e.target.result}" muted></video>` :
-                `<img src="${e.target.result}" alt="Preview">`;
-            div.innerHTML += `<button class="media-upload-remove" onclick="removeReviewMedia(${i})">✕</button>`;
+            div.innerHTML = (isVideo ? `<video src="${e.target.result}" muted></video>` : `<img src="${e.target.result}" alt="Preview">`) +
+                `<button class="media-upload-remove" onclick="removeReviewMedia(${i})">✕</button>`;
             preview.appendChild(div);
         };
         reader.readAsDataURL(file);
@@ -2241,7 +2200,6 @@ function previewReviewMedia(event) {
 }
 function removeReviewMedia(idx) {
     reviewMediaFiles.splice(idx, 1);
-    // Rebuild input and preview
     document.getElementById('reviewMediaInput').value='';
     const preview = document.getElementById('reviewMediaPreview');
     preview.innerHTML = '';
@@ -2260,7 +2218,6 @@ function removeReviewMedia(idx) {
 }
 
 async function submitReview() {
-    // Require login
     if (!currentUser) {
         showNotification('❌ Please login to submit a review!');
         setTimeout(() => { returnToProductAfterAuth = true; goToAuth(); }, 800);
@@ -2271,7 +2228,6 @@ async function submitReview() {
 
     showNotification('⏳ Submitting review...');
 
-    // Upload media
     const uploadedMedia = [];
     for (let file of reviewMediaFiles) {
         const isVideo = file.type.startsWith('video/');
@@ -2281,22 +2237,25 @@ async function submitReview() {
     }
 
     const review = {
-        id:'rev_'+Date.now(), productId:currentProductId,
+        id: 'rev_'+Date.now(), product_id: currentProductId,
         author: currentUser.name || currentUser.email || 'Customer',
-        userId: currentUser.id, rating:currentRating, text,
-        media:uploadedMedia, date:new Date().toISOString()
+        user_id: currentUser.id, rating: currentRating, text,
+        media: JSON.stringify(uploadedMedia), date: new Date().toISOString()
     };
 
-    if (firebaseReady && db) db.ref('reviews/'+review.id).set(review);
-    else allReviews.push(review);
+    if (isSupabaseConnected) {
+        await sbInsert('reviews', review);
+        allReviews.push({...review, media: uploadedMedia});
+    } else {
+        allReviews.push({...review, media: uploadedMedia});
+    }
 
-    // Update product avg rating
+    // Update avg rating
     const p = allProducts.find(x => x.id===currentProductId);
     if (p) {
-        const pReviews = allReviews.filter(r => r.productId===currentProductId);
-        pReviews.push(review);
-        p.avgRating = Math.round(pReviews.reduce((s,r)=>s+r.rating,0)/pReviews.length);
-        saveProductToFirebase(p);
+        const pReviews = allReviews.filter(r => (r.product_id||r.productId)===currentProductId);
+        p.avg_rating = Math.round(pReviews.reduce((s,r)=>s+r.rating,0)/pReviews.length);
+        if (isSupabaseConnected) await sbUpdate('products', 'id', currentProductId, { avg_rating: p.avg_rating });
     }
 
     document.getElementById('reviewText').value='';
@@ -2311,15 +2270,15 @@ async function submitReview() {
     showNotification('✅ Review submitted!');
 }
 let returnToProductAfterAuth = false;
-const returnProductId_holder = { val: null };
 
 function loadReviews(productId) {
-    const reviews = allReviews.filter(r => r.productId===productId);
+    const reviews = allReviews.filter(r => (r.product_id||r.productId)===productId);
     const container = document.getElementById('reviewsList');
     if (!reviews.length) { container.innerHTML='<div style="color:var(--text-secondary);padding:20px;">No reviews yet. Be the first!</div>'; return; }
     container.innerHTML = reviews.map(r => {
         const stars = Math.min(5, r.rating||0);
-        const mediaHtml = (r.media && r.media.length) ? `<div class="review-media">${r.media.map(m =>
+        const media = tryParse(r.media, []);
+        const mediaHtml = media.length ? `<div class="review-media">${media.map(m =>
             m.type==='video' ?
             `<video class="review-media-video" src="${m.url}" onclick="openLightbox('video','${m.url}')" muted></video>` :
             `<img class="review-media-thumb" src="${m.url}" alt="Review media" onclick="openLightbox('image','${m.url}')">`
@@ -2361,12 +2320,12 @@ function updateCart() {
     const container = document.getElementById('cartItemsContainer');
     if (!cart.length) { container.innerHTML='<div style="color:var(--text-secondary);text-align:center;padding:40px;">Cart is empty</div>'; document.getElementById('subtotalPrice').textContent='₹0'; document.getElementById('totalPrice').textContent='₹0'; return; }
     container.innerHTML = cart.map(item => {
-        const price=item.offerPrice||item.price||0;
-        const img=getCoverImage(item);
+        const price = item.offer_price||item.offerPrice||item.price||0;
+        const img = getCoverImage(item);
         return `<div style="display:flex;gap:12px;padding:12px;background:var(--primary);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;">
             <div style="width:68px;height:68px;background-image:url('${img}');background-size:cover;border-radius:6px;flex-shrink:0;"></div>
             <div style="flex:1;"><div style="color:var(--gold);font-weight:700;font-size:14px;">${item.name}</div>
-            <div style="color:var(--text-secondary);font-size:12px;margin:4px 0;">₹${price.toLocaleString()} × ${item.qty}</div>
+            <div style="color:var(--text-secondary);font-size:12px;margin:4px 0;">₹${Number(price).toLocaleString()} × ${item.qty}</div>
             <div style="display:flex;gap:5px;margin-top:6px;">
                 <button class="btn-secondary" onclick="updateQty('${item.id}',${item.qty-1})" style="padding:5px 10px;">−</button>
                 <input type="number" value="${item.qty}" onchange="updateQty('${item.id}',this.value)" style="width:38px;background:var(--primary);border:1px solid var(--border);padding:5px;text-align:center;color:var(--text-primary);border-radius:4px;">
@@ -2375,67 +2334,69 @@ function updateCart() {
             </div></div>
         </div>`;
     }).join('');
-    const total=cart.reduce((s,c)=>s+((c.offerPrice||c.price||0)*c.qty),0);
+    const total = cart.reduce((s,c)=>s+((c.offer_price||c.offerPrice||c.price||0)*c.qty),0);
     document.getElementById('subtotalPrice').textContent=`₹${total.toLocaleString()}`;
     document.getElementById('totalPrice').textContent=`₹${total.toLocaleString()}`;
 }
 function updateCartBadge() {
-    const count=cart.reduce((s,c)=>s+c.qty,0);
+    const count = cart.reduce((s,c)=>s+c.qty,0);
     ['cartBadge','cartBadge2','cartBadge3','cartBadge4'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=count;});
 }
 function openCart() { updateCart(); document.getElementById('cartModal').classList.add('active'); }
 function closeCart() { document.getElementById('cartModal').classList.remove('active'); }
 
-function proceedCheckout() {
+async function proceedCheckout() {
     if (!cart.length) { showNotification('❌ Cart is empty'); return; }
     if (!currentUser) { showNotification('❌ Please login to checkout!'); goToAuth(); return; }
-    const total=cart.reduce((s,c)=>s+((c.offerPrice||c.price||0)*c.qty),0);
-    const address=`${currentUser.address||''}, ${currentUser.city||''}, ${currentUser.state||''} ${currentUser.postal||''}`;
-    const wa=contactLinks.whatsapp||'918220390911';
-    const orderId='ORD_'+Date.now();
-    const itemsMsg=cart.map(c=>{const p=c.offerPrice||c.price||0;return `• ${c.name}\n  Qty: ${c.qty}\n  Price: ₹${(p*c.qty).toLocaleString()}`}).join('\n\n');
-    const msg=`🛍️ *Royal Perfect New Order*\n\n👤 *Customer*\n━━━━━━━━\nName: ${currentUser.name}\nPhone: ${currentUser.mobile}\nEmail: ${currentUser.email||''}\nAddress: ${address}\n\n📦 *Items*\n━━━━━━━━\n${itemsMsg}\n\n💰 *Grand Total: ₹${total.toLocaleString()}*\n📋 Order: ${orderId}\n📅 ${new Date().toLocaleDateString('en-IN')}`;
+    const total = cart.reduce((s,c)=>s+((c.offer_price||c.offerPrice||c.price||0)*c.qty),0);
+    const address = `${currentUser.address||''}, ${currentUser.city||''}, ${currentUser.state||''} ${currentUser.postal||''}`;
+    const wa = contactLinks.whatsapp||'918220390911';
+    const orderId = 'ORD_'+Date.now();
+    const itemsMsg = cart.map(c=>{const p=c.offer_price||c.offerPrice||c.price||0;return `• ${c.name}\n  Qty: ${c.qty}\n  Price: ₹${(p*c.qty).toLocaleString()}`}).join('\n\n');
+    const msg = `🛍️ *Royal Perfect New Order*\n\n👤 *Customer*\n━━━━━━━━\nName: ${currentUser.name}\nPhone: ${currentUser.mobile}\nEmail: ${currentUser.email||''}\nAddress: ${address}\n\n📦 *Items*\n━━━━━━━━\n${itemsMsg}\n\n💰 *Grand Total: ₹${total.toLocaleString()}*\n📋 Order: ${orderId}\n📅 ${new Date().toLocaleDateString('en-IN')}`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank');
-    const order={id:orderId,customer:currentUser.name,phone:currentUser.mobile,email:currentUser.email,address,items:cart.map(c=>({productId:c.id,productName:c.name,quantity:c.qty,singlePrice:c.offerPrice||c.price||0})),grandTotal:total,date:new Date().toISOString()};
-    if (firebaseReady&&db) db.ref('orders/'+orderId).set(order); else allOrders.push(order);
+    const order = {id:orderId, customer:currentUser.name, phone:currentUser.mobile, email:currentUser.email, address, items:JSON.stringify(cart.map(c=>({productId:c.id,productName:c.name,quantity:c.qty,singlePrice:c.offer_price||c.offerPrice||c.price||0}))), grand_total:total, date:new Date().toISOString()};
+    if (isSupabaseConnected) await sbInsert('orders', order);
+    else allOrders.push(order);
     cart=[]; updateCartBadge(); closeCart(); showNotification('✅ Order sent via WhatsApp!');
 }
 
 function addDetailToCart() { addToCart(currentProductId); }
 
-function orderProductDirect() {
-    const p=allProducts.find(x=>x.id===currentProductId); if (!p) return;
+async function orderProductDirect() {
+    const p = allProducts.find(x=>x.id===currentProductId); if (!p) return;
     if (!currentUser) { showNotification('❌ Please login to order!'); returnToProductAfterAuth=true; goToAuth(); return; }
-    const price=p.offerPrice||p.price||0;
-    const link=p.productLink||generateProductLink(currentProductId);
-    const address=`${currentUser.address||''}, ${currentUser.city||''}, ${currentUser.state||''} ${currentUser.postal||''}`;
-    const wa=contactLinks.whatsapp||'918220390911';
-    const orderId='ORD_'+Date.now();
-    const msg=`🛍️ *Royal Perfect New Order*\n\n👤 *Customer*\n━━━━━━━━\nName: ${currentUser.name}\nPhone: ${currentUser.mobile}\nAddress: ${address}\n\n📦 *Product*\n━━━━━━━━\n${p.name}\nQty: 1\nPrice: ₹${price.toLocaleString()}\nLink: ${link}\n\n💰 *Total: ₹${price.toLocaleString()}*\n📋 Order: ${orderId}\n📅 ${new Date().toLocaleDateString('en-IN')}`;
+    const price = p.offer_price||p.offerPrice||p.price||0;
+    const link = p.product_link||generateProductLink(currentProductId);
+    const address = `${currentUser.address||''}, ${currentUser.city||''}, ${currentUser.state||''} ${currentUser.postal||''}`;
+    const wa = contactLinks.whatsapp||'918220390911';
+    const orderId = 'ORD_'+Date.now();
+    const msg = `🛍️ *Royal Perfect New Order*\n\n👤 *Customer*\n━━━━━━━━\nName: ${currentUser.name}\nPhone: ${currentUser.mobile}\nAddress: ${address}\n\n📦 *Product*\n━━━━━━━━\n${p.name}\nQty: 1\nPrice: ₹${Number(price).toLocaleString()}\nLink: ${link}\n\n💰 *Total: ₹${Number(price).toLocaleString()}*\n📋 Order: ${orderId}\n📅 ${new Date().toLocaleDateString('en-IN')}`;
     window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, '_blank');
-    const order={id:orderId,customer:currentUser.name,phone:currentUser.mobile,email:currentUser.email,address,productName:p.name,productLink:link,quantity:1,grandTotal:price,date:new Date().toISOString()};
-    if (firebaseReady&&db) db.ref('orders/'+orderId).set(order); else allOrders.push(order);
+    const order = {id:orderId, customer:currentUser.name, phone:currentUser.mobile, email:currentUser.email, address, product_name:p.name, product_link:link, quantity:1, grand_total:price, date:new Date().toISOString()};
+    if (isSupabaseConnected) await sbInsert('orders', order);
+    else allOrders.push(order);
     showNotification('✅ Order sent via WhatsApp!');
 }
 
 // ===== SHARE =====
 function copyProductLink() {
-    const link=document.getElementById('productShareLink').value;
+    const link = document.getElementById('productShareLink').value;
     navigator.clipboard.writeText(link).then(()=>showNotification('✅ Link copied!')).catch(()=>{document.getElementById('productShareLink').select();document.execCommand('copy');showNotification('✅ Link copied!');});
 }
 function getShareMessage() {
-    const p=allProducts.find(x=>x.id===currentProductId); if (!p) return '';
-    const price=p.offerPrice||p.price||0;
-    const link=p.productLink||generateProductLink(currentProductId);
-    return `✨ Royal Perfect ✨\n🛍️ ${p.name}\n💰 ₹${price.toLocaleString()}\n🔗 ${link}`;
+    const p = allProducts.find(x=>x.id===currentProductId); if (!p) return '';
+    const price = p.offer_price||p.offerPrice||p.price||0;
+    const link = p.product_link||generateProductLink(currentProductId);
+    return `✨ Royal Perfect ✨\n🛍️ ${p.name}\n💰 ₹${Number(price).toLocaleString()}\n🔗 ${link}`;
 }
 function shareOnWhatsApp() { window.open(`https://wa.me/?text=${encodeURIComponent(getShareMessage())}`, '_blank'); }
 function shareOnInstagram() { navigator.clipboard.writeText(getShareMessage()).then(()=>{showNotification('📋 Copied! Paste on Instagram');window.open('https://instagram.com','_blank');}); }
 function shareOnGmail() {
-    const p=allProducts.find(x=>x.id===currentProductId); if (!p) return;
-    const price=p.offerPrice||p.price||0;
-    const link=p.productLink||generateProductLink(currentProductId);
-    window.open(`https://mail.google.com/mail/?view=cm&su=${encodeURIComponent('Check out '+p.name+' from Royal Perfect')}&body=${encodeURIComponent(`Hi,\n\nCheck out: ${p.name}\nPrice: ₹${price.toLocaleString()}\n${link}\n\nShop at Royal Perfect!`)}`, '_blank');
+    const p = allProducts.find(x=>x.id===currentProductId); if (!p) return;
+    const price = p.offer_price||p.offerPrice||p.price||0;
+    const link = p.product_link||generateProductLink(currentProductId);
+    window.open(`https://mail.google.com/mail/?view=cm&su=${encodeURIComponent('Check out '+p.name+' from Royal Perfect')}&body=${encodeURIComponent(`Hi,\n\nCheck out: ${p.name}\nPrice: ₹${Number(price).toLocaleString()}\n${link}\n\nShop at Royal Perfect!`)}`, '_blank');
 }
 
 // ===== NAVIGATION =====
@@ -2460,12 +2421,12 @@ function showProfilePage() {
     displayProfileData(); updateAuthButton(); window.scrollTo(0,0);
 }
 function updateAuthButton() {
-    const btn=document.getElementById('authButton');
+    const btn = document.getElementById('authButton');
     if (currentUser) { btn.textContent='👤 Profile'; btn.onclick=showProfilePage; }
     else { btn.textContent='🔐 Login'; btn.onclick=goToAuth; }
 }
 
-// ===== AUTH =====
+// ===== AUTH (Custom via Supabase users table) =====
 let loginMethod = 'email';
 function setLoginMethod(method, btn) {
     loginMethod = method;
@@ -2482,31 +2443,23 @@ function switchAuthTab(tab, btn) {
     document.getElementById(tab+'Form').classList.add('active');
     btn.classList.add('active');
 }
-function doLogin() {
+async function doLogin() {
     const identifier = document.getElementById('loginIdentifier').value.trim();
     const pass = document.getElementById('loginPassword').value;
     if (!identifier || !pass) { showNotification('❌ Fill all fields'); return; }
-    // Try Firebase auth for email, else custom DB lookup for mobile
-    if (loginMethod==='email' && firebaseReady && auth) {
-        auth.signInWithEmailAndPassword(identifier, pass)
-        .then(cred => {
-            const uid = cred.user.uid;
-            const dbUser = allUsers.find(u=>u.firebaseUid===uid||u.email===identifier);
-            if (dbUser) { finishLogin(dbUser); }
-            else {
-                db.ref('users/'+uid).once('value', snap => {
-                    const u = snap.val()||{id:uid,name:cred.user.email,email:identifier,mobile:'',firebaseUid:uid};
-                    finishLogin(u);
-                });
-            }
-        })
-        .catch(err => {
-            // fallback to custom users
-            const u = allUsers.find(x=>(x.email===identifier)&&x.password===pass);
-            if (u) finishLogin(u); else showNotification('❌ Invalid credentials!');
-        });
+    
+    if (isSupabaseConnected) {
+        // Look up user from users table (custom auth via users table)
+        let users;
+        if (loginMethod === 'email') {
+            users = await sbGet('users', { email: identifier });
+        } else {
+            users = await sbGet('users', { mobile: identifier });
+        }
+        const u = users.find(x => x.password === pass || x.password_hash === pass);
+        if (u) { finishLogin(u); }
+        else { showNotification('❌ Invalid credentials!'); }
     } else {
-        // Mobile or no Firebase auth: custom DB lookup
         const u = allUsers.find(x=>(x.email===identifier||x.mobile===identifier)&&x.password===pass);
         if (u) finishLogin(u); else showNotification('❌ Invalid credentials!');
     }
@@ -2523,55 +2476,38 @@ function finishLogin(user) {
         setTimeout(() => showProfilePage(), 800);
     }
 }
-function doSignup() {
-    const name=document.getElementById('signupName').value.trim();
-    const email=document.getElementById('signupEmail').value.trim();
-    const mobile=document.getElementById('signupMobile').value.trim();
-    const address=document.getElementById('signupAddress').value.trim();
-    const city=document.getElementById('signupCity').value.trim();
-    const state=document.getElementById('signupState').value.trim();
-    const postal=document.getElementById('signupPostal').value.trim();
-    const pass=document.getElementById('signupPassword').value;
-    const confirm=document.getElementById('signupConfirm').value;
+async function doSignup() {
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const mobile = document.getElementById('signupMobile').value.trim();
+    const address = document.getElementById('signupAddress').value.trim();
+    const city = document.getElementById('signupCity').value.trim();
+    const state = document.getElementById('signupState').value.trim();
+    const postal = document.getElementById('signupPostal').value.trim();
+    const pass = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('signupConfirm').value;
     if (!name||!email||!mobile||!pass) { showNotification('❌ Fill required fields'); return; }
     if (pass!==confirm) { showNotification('❌ Passwords do not match!'); return; }
     if (allUsers.find(u=>u.email===email)) { showNotification('❌ Email already exists!'); return; }
 
-    const createUser = (uid) => {
-        const user={id:uid||'user_'+Date.now(),name,email,mobile,address,city,state,postal,password:pass,createdAt:new Date().toISOString()};
-        if (firebaseReady&&db) db.ref('users/'+user.id).set(user);
-        else allUsers.push(user);
-        finishLogin(user);
-        showNotification('✅ Account created! Welcome '+name+'!');
-    };
-
-    if (firebaseReady&&auth) {
-        auth.createUserWithEmailAndPassword(email, pass)
-        .then(cred=>{createUser(cred.user.uid);})
-        .catch(err=>{
-            if (err.code==='auth/email-already-in-use') showNotification('❌ Email already registered!');
-            else createUser(null);
-        });
-    } else createUser(null);
+    const uid = 'user_' + Date.now();
+    const user = {id:uid, name, email, mobile, address, city, state, postal, password:pass, created_at:new Date().toISOString()};
+    if (isSupabaseConnected) {
+        const ok = await sbInsert('users', user);
+        if (!ok) { showNotification('❌ Error creating account. Try again.'); return; }
+    }
+    allUsers.push(user);
+    finishLogin(user);
+    showNotification('✅ Account created! Welcome '+name+'!');
 }
 function loadCurrentUser() {
-    const s=localStorage.getItem('currentUser');
-    if (s) { try { currentUser=JSON.parse(s); updateAuthButton(); } catch(e){} }
-    // Firebase auth state
-    if (firebaseReady&&auth) {
-        auth.onAuthStateChanged(fbUser => {
-            if (fbUser && !currentUser) {
-                const dbUser = allUsers.find(u=>u.firebaseUid===fbUser.uid||u.email===fbUser.email);
-                if (dbUser) { currentUser=dbUser; localStorage.setItem('currentUser',JSON.stringify(dbUser)); updateAuthButton(); }
-            }
-        });
-    }
+    const s = localStorage.getItem('currentUser');
+    if (s) { try { currentUser = JSON.parse(s); updateAuthButton(); } catch(e){} }
 }
-function logout() {
+async function logout() {
     if (!confirm('Logout?')) return;
-    currentUser=null;
+    currentUser = null;
     localStorage.removeItem('currentUser');
-    if (firebaseReady&&auth) auth.signOut();
     updateAuthButton(); showNotification('✅ Logged out'); goHome();
 }
 
@@ -2586,26 +2522,39 @@ function displayProfileData() {
     document.getElementById('profileState').textContent=currentUser.state||'N/A';
     document.getElementById('profilePostal').textContent=currentUser.postal||'N/A';
 }
-function openEditPersonal() { if (!currentUser) return; document.getElementById('editName').value=currentUser.name; document.getElementById('editEmail').value=currentUser.email; document.getElementById('editMobile').value=currentUser.mobile||''; document.getElementById('editPersonalModal').classList.add('active'); }
+function openEditPersonal() {
+    if (!currentUser) return;
+    document.getElementById('editName').value=currentUser.name;
+    document.getElementById('editEmail').value=currentUser.email;
+    document.getElementById('editMobile').value=currentUser.mobile||'';
+    document.getElementById('editPersonalModal').classList.add('active');
+}
 function closeEditPersonal() { document.getElementById('editPersonalModal').classList.remove('active'); }
-function savePersonalInfo() {
+async function savePersonalInfo() {
     if (!currentUser) return;
     currentUser.name=document.getElementById('editName').value;
     currentUser.email=document.getElementById('editEmail').value;
     currentUser.mobile=document.getElementById('editMobile').value;
-    if (firebaseReady&&db) db.ref('users/'+currentUser.id).update(currentUser);
+    if (isSupabaseConnected) await sbUpdate('users', 'id', currentUser.id, {name:currentUser.name, email:currentUser.email, mobile:currentUser.mobile});
     localStorage.setItem('currentUser',JSON.stringify(currentUser));
     closeEditPersonal(); displayProfileData(); showNotification('✅ Updated!');
 }
-function openEditAddress() { if (!currentUser) return; document.getElementById('editAddress').value=currentUser.address||''; document.getElementById('editCity').value=currentUser.city||''; document.getElementById('editState').value=currentUser.state||''; document.getElementById('editPostal').value=currentUser.postal||''; document.getElementById('editAddressModal').classList.add('active'); }
+function openEditAddress() {
+    if (!currentUser) return;
+    document.getElementById('editAddress').value=currentUser.address||'';
+    document.getElementById('editCity').value=currentUser.city||'';
+    document.getElementById('editState').value=currentUser.state||'';
+    document.getElementById('editPostal').value=currentUser.postal||'';
+    document.getElementById('editAddressModal').classList.add('active');
+}
 function closeEditAddress() { document.getElementById('editAddressModal').classList.remove('active'); }
-function saveAddressInfo() {
+async function saveAddressInfo() {
     if (!currentUser) return;
     currentUser.address=document.getElementById('editAddress').value;
     currentUser.city=document.getElementById('editCity').value;
     currentUser.state=document.getElementById('editState').value;
     currentUser.postal=document.getElementById('editPostal').value;
-    if (firebaseReady&&db) db.ref('users/'+currentUser.id).update(currentUser);
+    if (isSupabaseConnected) await sbUpdate('users', 'id', currentUser.id, {address:currentUser.address, city:currentUser.city, state:currentUser.state, postal:currentUser.postal});
     localStorage.setItem('currentUser',JSON.stringify(currentUser));
     closeEditAddress(); displayProfileData(); showNotification('✅ Address saved!');
 }
@@ -2619,44 +2568,44 @@ function openAdminModal() {
 }
 function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
 function verifyAdmin() {
-  const pass=document.getElementById('adminPass').value;
-  if (pass===adminPassword) {
-  document.getElementById('adminPasswordSection').style.display='none';
-  document.getElementById('adminContent').style.display='block';
-  
-  // Update sync status immediately based on connection state
-  if (isFirebaseConnected) {
-      updateSyncStatus('✅ Connected - Realtime Sync Active');
-  } else if (firebaseReady) {
-      updateSyncStatus('⏳ Connecting to Firebase...');
-  } else {
-      updateSyncStatus('📱 Local Mode - Firebase Unavailable');
-  }
-  
-  loadAdminData(); loadContactLinksInAdmin();
-  // init image grid when entering admin
-  initAdminImageGrid(); initAdminVideoGrid();
-  } else {
-  showNotification('❌ Wrong password! Access denied.');
-  document.getElementById('adminPass').value='';
-  }
-  }
+    const pass = document.getElementById('adminPass').value;
+    if (pass === adminPassword) {
+        document.getElementById('adminPasswordSection').style.display='none';
+        document.getElementById('adminContent').style.display='block';
+        updateSyncStatus(isSupabaseConnected ? '✅ Connected to Supabase - Live Data' : '📱 Local Mode');
+        loadAdminData(); loadContactLinksInAdmin();
+        initAdminImageGrid(); initAdminVideoGrid();
+    } else {
+        showNotification('❌ Wrong password! Access denied.');
+        document.getElementById('adminPass').value='';
+    }
+}
 function loadContactLinksInAdmin() {
     document.getElementById('gmailEmail').value=contactLinks.gmail||'royalperfect2002@gmail.com';
     document.getElementById('whatsappNumber').value=contactLinks.whatsapp||'918220390911';
     document.getElementById('instaUrl').value=contactLinks.insta||'https://instagram.com';
     document.getElementById('youtubeUrl').value=contactLinks.youtube||'https://youtube.com';
 }
-function uploadVideo() {
-    const file=document.getElementById('videoFileInput').files[0]; if (!file){showNotification('❌ Select video');return;}
-    const r=new FileReader();
-    r.onload=e=>{
-        document.getElementById('videoSource').src=e.target.result;
+async function uploadVideo() {
+    const file = document.getElementById('videoFileInput').files[0];
+    if (!file) { showNotification('❌ Select video'); return; }
+    showNotification('⏳ Uploading video...');
+    try {
+        const url = await uploadToCloudinary(file);
+        document.getElementById('videoSource').src = url;
         document.getElementById('bannerVideo').load();
-        if (firebaseReady&&db) db.ref('settings/bannerVideoUrl').set(e.target.result);
+        if (isSupabaseConnected) await sbFetch('/rest/v1/settings?id=eq.1', 'PATCH', { banner_video_url: url });
         showNotification('✅ Banner video uploaded!');
-    };
-    r.readAsDataURL(file);
+    } catch(e) {
+        // Fallback to data URL
+        const r = new FileReader();
+        r.onload = e2 => {
+            document.getElementById('videoSource').src = e2.target.result;
+            document.getElementById('bannerVideo').load();
+            showNotification('✅ Banner video set (local)!');
+        };
+        r.readAsDataURL(file);
+    }
 }
 function switchAdminTab(tab, btn) {
     document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
@@ -2664,26 +2613,30 @@ function switchAdminTab(tab, btn) {
     document.getElementById(tab+'Tab').classList.add('active');
     btn.classList.add('active');
     if (tab==='categories') loadCategoriesAdmin();
+    if (tab==='story') loadStoryData();
 }
 function loadAdminData() {
     updateCategoryDropdowns();
 
     // Products list
-    const list=document.getElementById('adminProductsList');
+    const list = document.getElementById('adminProductsList');
     if (!allProducts.length){list.innerHTML='<p style="color:var(--text-secondary);padding:18px;">No products yet</p>';return;}
-    list.innerHTML=allProducts.map(p=>{
-        const hasOffer=p.actualPrice&&p.offerPrice&&p.actualPrice>p.offerPrice;
-        const price=p.offerPrice||p.price||0;
-        const link=p.productLink||generateProductLink(p.id);
-        const img=getCoverImage(p);
-        const imgCount=(p.images&&p.images.length)||1;
-        const vidCount=(p.videos&&p.videos.length)||0;
+    list.innerHTML = allProducts.map(p => {
+        const hasOffer = (p.actual_price||p.actualPrice) && (p.offer_price||p.offerPrice) && (p.actual_price||p.actualPrice) > (p.offer_price||p.offerPrice);
+        const price = p.offer_price||p.offerPrice||p.price||0;
+        const actualP = p.actual_price||p.actualPrice||0;
+        const link = p.product_link||generateProductLink(p.id);
+        const img = getCoverImage(p);
+        const imgs = tryParse(p.images, []);
+        const vids = tryParse(p.videos, []);
+        const imgCount = imgs.length || 1;
+        const vidCount = vids.length || 0;
         return `<div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:var(--primary);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;">
             <div style="display:flex;gap:12px;">
                 <div style="width:72px;flex-shrink:0;aspect-ratio:9/16;background-image:url('${img}');background-size:cover;border-radius:6px;"></div>
                 <div style="flex:1;">
                     <div style="color:var(--text-primary);font-weight:700;margin-bottom:4px;">${p.name}</div>
-                    <div style="margin-bottom:6px;">${hasOffer?`<span style="color:var(--text-secondary);text-decoration:line-through;font-size:12px;">₹${p.actualPrice}</span> `:''}<span style="color:var(--gold);font-weight:700;">₹${price}</span></div>
+                    <div style="margin-bottom:6px;">${hasOffer?`<span style="color:var(--text-secondary);text-decoration:line-through;font-size:12px;">₹${actualP}</span> `:''}<span style="color:var(--gold);font-weight:700;">₹${price}</span></div>
                     <div style="font-size:11px;color:var(--text-secondary);margin-bottom:8px;">📷 ${imgCount} images · 🎬 ${vidCount} videos</div>
                     <div style="display:flex;gap:6px;flex-wrap:wrap;">
                         <button class="btn-edit" onclick="openEditProduct('${p.id}')">✏️ Edit</button>
@@ -2702,60 +2655,60 @@ function loadAdminData() {
     }).join('');
 
     // Reviews
-    const rl=document.getElementById('adminReviewsList');
-    rl.innerHTML=!allReviews.length?'<p style="color:var(--text-secondary);padding:18px;">No reviews</p>':
-        allReviews.map(r=>{const prod=allProducts.find(p=>p.id===r.productId);return `<div style="background:var(--primary);padding:14px;border-radius:8px;margin-bottom:10px;border:1px solid var(--border);"><div style="color:var(--gold);font-weight:700;margin-bottom:4px;">📦 ${prod?prod.name:'Deleted Product'}</div><div style="color:var(--text-secondary);font-size:12px;">👤 ${r.author}</div><div style="color:var(--warning);margin:6px 0;">${'★'.repeat(r.rating)}</div><div style="color:var(--text-secondary);font-size:13px;">"${r.text}"</div><button class="btn-delete" onclick="deleteReview('${r.id}')" style="margin-top:8px;">🗑️ Delete</button></div>`;}).join('');
+    const rl = document.getElementById('adminReviewsList');
+    rl.innerHTML = !allReviews.length ? '<p style="color:var(--text-secondary);padding:18px;">No reviews</p>' :
+        allReviews.map(r=>{const prod=allProducts.find(p=>p.id===(r.product_id||r.productId));return `<div style="background:var(--primary);padding:14px;border-radius:8px;margin-bottom:10px;border:1px solid var(--border);"><div style="color:var(--gold);font-weight:700;margin-bottom:4px;">📦 ${prod?prod.name:'Deleted Product'}</div><div style="color:var(--text-secondary);font-size:12px;">👤 ${r.author}</div><div style="color:var(--warning);margin:6px 0;">${'★'.repeat(r.rating)}</div><div style="color:var(--text-secondary);font-size:13px;">"${r.text}"</div><button class="btn-delete" onclick="deleteReview('${r.id}')" style="margin-top:8px;">🗑️ Delete</button></div>`;}).join('');
 
     // Orders
-    const ol=document.getElementById('adminOrdersList');
-    ol.innerHTML=!allOrders.length?'<p style="color:var(--text-secondary);padding:18px;">No orders yet</p>':
+    const ol = document.getElementById('adminOrdersList');
+    ol.innerHTML = !allOrders.length ? '<p style="color:var(--text-secondary);padding:18px;">No orders yet</p>' :
         allOrders.map(o=>{
-            const total=o.grandTotal||0;
-            const date=o.date?new Date(o.date).toLocaleDateString('en-IN'):'N/A';
+            const total = o.grand_total||o.grandTotal||0;
+            const date = o.date?new Date(o.date).toLocaleDateString('en-IN'):'N/A';
             return `<div style="background:var(--primary);padding:14px;border-radius:8px;margin-bottom:10px;border:1px solid var(--border);">
                 <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="color:var(--gold);font-weight:700;">📋 ${o.id}</span><span style="color:var(--text-secondary);font-size:11px;">📅 ${date}</span></div>
                 <div style="color:var(--text-primary);font-weight:600;">👤 ${o.customer||'N/A'}</div>
                 <div style="color:var(--text-secondary);font-size:12px;">📱 ${o.phone||o.mobile||'N/A'}</div>
                 <div style="color:var(--text-secondary);font-size:12px;margin:4px 0;">📍 ${o.address||'N/A'}</div>
-                <div style="color:var(--gold);font-weight:700;font-size:17px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">💰 ₹${total.toLocaleString()}</div>
+                <div style="color:var(--gold);font-weight:700;font-size:17px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">💰 ₹${Number(total).toLocaleString()}</div>
             </div>`;
         }).join('');
 }
-function deleteReview(id) {
+async function deleteReview(id) {
     if (!confirm('Delete review?')) return;
-    allReviews=allReviews.filter(r=>r.id!==id);
-    if (firebaseReady&&db) db.ref('reviews/'+id).remove();
+    allReviews = allReviews.filter(r=>r.id!==id);
+    if (isSupabaseConnected) await sbDelete('reviews', 'id', id);
     loadAdminData(); showNotification('✅ Review deleted!');
 }
-function updatePaginationSettings() {
-    const val=parseInt(document.getElementById('itemsPerPage').value);
+async function updatePaginationSettings() {
+    const val = parseInt(document.getElementById('itemsPerPage').value);
     if (!val||val<1) return;
-    itemsPerPage=val; currentPage=1;
-    if (firebaseReady&&db) db.ref('settings/itemsPerPage').set(itemsPerPage);
+    itemsPerPage = val; currentPage = 1;
+    if (isSupabaseConnected) await sbUpdate('settings', 'id', '1', { items_per_page: itemsPerPage });
     displayPaginatedProducts(); showNotification('✅ Pagination settings saved!');
 }
 function copyAdminProductLink(id) {
-    const input=document.getElementById('link_'+id); if(!input)return;
+    const input = document.getElementById('link_'+id); if(!input)return;
     navigator.clipboard.writeText(input.value).then(()=>showNotification('✅ Link copied!')).catch(()=>{input.select();document.execCommand('copy');showNotification('✅ Link copied!');});
 }
 function shareAdminProductLink(id) {
-    const p=allProducts.find(x=>x.id===id); if(!p)return;
-    const price=p.offerPrice||p.price||0;
-    const link=p.productLink||generateProductLink(id);
-    window.open(`https://wa.me/?text=${encodeURIComponent(`✨ Royal Perfect ✨\n🛍️ ${p.name}\n💰 ₹${price.toLocaleString()}\n🔗 ${link}`)}`, '_blank');
+    const p = allProducts.find(x=>x.id===id); if(!p)return;
+    const price = p.offer_price||p.offerPrice||p.price||0;
+    const link = p.product_link||generateProductLink(id);
+    window.open(`https://wa.me/?text=${encodeURIComponent(`✨ Royal Perfect ✨\n🛍️ ${p.name}\n💰 ₹${Number(price).toLocaleString()}\n🔗 ${link}`)}`, '_blank');
 }
 function viewAdminProduct(id) { closeAdminModal(); viewProduct(id); }
 
 // ===== ADMIN PASSWORD CHANGE =====
-function changeAdminPassword() {
-    const current=document.getElementById('currentAdminPass').value;
-    const newPass=document.getElementById('newAdminPass').value;
-    const confirm=document.getElementById('confirmAdminPass').value;
+async function changeAdminPassword() {
+    const current = document.getElementById('currentAdminPass').value;
+    const newPass = document.getElementById('newAdminPass').value;
+    const confirm = document.getElementById('confirmAdminPass').value;
     if (current !== adminPassword) { showNotification('❌ Current password is wrong!'); return; }
     if (!newPass || newPass.length < 6) { showNotification('❌ New password must be at least 6 characters'); return; }
     if (newPass !== confirm) { showNotification('❌ Passwords do not match!'); return; }
     adminPassword = newPass;
-    if (firebaseReady&&db) db.ref('settings/adminPassword').set(newPass);
+    if (isSupabaseConnected) await sbUpdate('settings', 'id', '1', { admin_password: newPass });
     document.getElementById('currentAdminPass').value='';
     document.getElementById('newAdminPass').value='';
     document.getElementById('confirmAdminPass').value='';
@@ -2764,47 +2717,15 @@ function changeAdminPassword() {
 
 // ===== UTILITIES =====
 function showNotification(msg) {
-    const n=document.createElement('div'); n.className='notification'; n.textContent=msg;
+    const n = document.createElement('div'); n.className='notification'; n.textContent=msg;
     document.body.appendChild(n); setTimeout(()=>n.remove(), 3200);
 }
 
-// ===== PERFORMANCE OPTIMIZATIONS =====
-// Defer non-critical image loading
-document.addEventListener('DOMContentLoaded', () => {
-    // Optimize product images with lazy loading
-    const imgs = document.querySelectorAll('.product-image');
-    imgs.forEach(img => {
-        const bg = img.style.backgroundImage;
-        if (bg) {
-            img.setAttribute('data-src', bg.slice(5, -2));
-            img.style.backgroundImage = '';
-        }
-    });
-});
-
-// Enable network information-based optimization
-if ('connection' in navigator) {
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (conn && (conn.effectiveType === '4g' || conn.effectiveType === 'wifi')) {
-        // Faster connection - preload more aggressively
-        console.log('[v0] High-speed connection detected - optimizing for performance');
-    }
-}
-
-// Add resource hints for faster loading
+// Resource hints for performance
 const link1 = document.createElement('link');
-link1.rel = 'preconnect';
-link1.href = 'https://api.cloudinary.com';
+link1.rel = 'preconnect'; link1.href = 'https://api.cloudinary.com';
 document.head.appendChild(link1);
-
-const link2 = document.createElement('link');
-link2.rel = 'dns-prefetch';
-link2.href = 'https://www.gstatic.com';
-document.head.appendChild(link2);
-
-// Optimize CSS animations
 document.documentElement.style.scrollBehavior = 'smooth';
-
 </script>
 </body>
 </html>
