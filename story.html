@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=5">
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="description" content="Royal Perfect Story - Premium Jewelry Brand History">
+    <meta name="keywords" content="Royal Perfect, story, brand history, jewelry, luxury">
+    <meta name="author" content="Royal Perfect">
+    <meta property="og:title" content="Royal Perfect Story">
+    <meta property="og:description" content="Discover the story behind Royal Perfect">
+    <meta property="og:type" content="website">
+    <title>Royal Perfect Story</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #0a0e27;
+            --secondary: #1a1f3a;
+            --gold: #d4af37;
+            --gold-light: #e8c547;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border: #2a3f5f;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-bottom: 2px solid var(--gold);
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212,175,55,0.3);
+        }
+
+        /* ===== STORY PAGE ===== */
+        .story-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .story-hero {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, var(--secondary) 0%, #0f1428 100%);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+        }
+
+        .story-hero h1 {
+            font-size: 48px;
+            color: var(--gold);
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .story-hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Story Sections */
+        .story-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-bottom: 80px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .story-section:nth-child(even) {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .story-section:nth-child(even) .story-image {
+            order: -1;
+        }
+
+        .story-image {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 2px solid var(--gold);
+            background: var(--secondary);
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .story-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .story-image-skeleton {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary) 25%, var(--border) 50%, var(--secondary) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .story-content {
+            padding: 20px;
+        }
+
+        .story-content h2 {
+            font-size: 36px;
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .story-content p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .story-section:nth-child(1) { animation-delay: 0.2s; }
+        .story-section:nth-child(2) { animation-delay: 0.4s; }
+        .story-section:nth-child(3) { animation-delay: 0.6s; }
+        .story-section:nth-child(4) { animation-delay: 0.8s; }
+        .story-section:nth-child(5) { animation-delay: 1s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: linear-gradient(135deg, var(--secondary) 0%, #0f1428 100%);
+            border-top: 2px solid var(--gold);
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .footer-content p {
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            background: rgba(0,0,0,0.4);
+            border: 2px solid var(--gold);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: var(--gold);
+        }
+
+        .social-link:hover {
+            transform: scale(1.1);
+            background: rgba(212,175,55,0.3);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .story-section {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .story-section:nth-child(even) .story-image {
+                order: 0;
+            }
+
+            .story-hero h1 {
+                font-size: 36px;
+            }
+
+            .story-content h2 {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .story-container {
+                padding: 20px 15px;
+            }
+
+            .story-hero {
+                padding: 40px 20px;
+                margin-bottom: 40px;
+            }
+
+            .story-hero h1 {
+                font-size: 28px;
+            }
+
+            .story-hero p {
+                font-size: 16px;
+            }
+
+            .story-image {
+                min-height: 300px;
+            }
+
+            .story-content h2 {
+                font-size: 24px;
+            }
+
+            .story-content p {
+                font-size: 14px;
+            }
+
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+        }
+
+        /* Loading state */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--gold);
+            border-top: 4px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section" onclick="window.location.href='index.html'">
+                <div class="logo-text">Royal Perfect</div>
+            </div>
+            <button class="back-btn" onclick="window.location.href='index.html'">← Back to Home</button>
+        </div>
+    </header>
+
+    <!-- Story Container -->
+    <main class="story-container">
+        <!-- Hero Section -->
+        <div class="story-hero">
+            <h1>Royal Perfect Story</h1>
+            <p>Discover the journey of luxury, elegance, and premium craftsmanship that defines Royal Perfect. Our story is one of passion, dedication, and excellence in every piece.</p>
+        </div>
+
+        <!-- Story Sections will be loaded here -->
+        <div id="story-content"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Royal Perfect. All rights reserved.</p>
+            <p>Premium Jewelry & Fashion</p>
+            <div class="social-links" id="social-links"></div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/supabase.js"></script>
+    <script src="js/cloudinary.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/story.js"></script>
+</body>
+</html>
