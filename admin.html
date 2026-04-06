@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="description" content="Royal Perfect Admin Panel">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Royal Perfect Admin Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #0a0e27;
+            --secondary: #1a1f3a;
+            --gold: #d4af37;
+            --gold-light: #e8c547;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --border: #2a3f5f;
+            --success: #31a24c;
+            --warning: #ff9500;
+            --error: #ff3333;
+        }
+
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, var(--secondary) 0%, #0f1428 100%);
+            border-right: 2px solid var(--gold);
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-item {
+            margin-bottom: 12px;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 12px 15px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background: rgba(212,175,55,0.2);
+            color: var(--gold);
+            border-left: 3px solid var(--gold);
+            padding-left: 12px;
+        }
+
+        /* Main Content */
+        .admin-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #0f1428 100%);
+            border-bottom: 2px solid var(--gold);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .logout-btn {
+            background: var(--error);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            opacity: 0.8;
+        }
+
+        .admin-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* Panels */
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .panel-header h2 {
+            font-size: 28px;
+            color: var(--gold);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: #000;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212,175,55,0.3);
+        }
+
+        .btn-edit {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        .btn-delete {
+            background: var(--error);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 2px;
+        }
+
+        /* Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--secondary);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .data-table th {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .data-table tr:hover {
+            background: rgba(212,175,55,0.05);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--primary);
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(212,175,55,0.3);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--secondary) 0%, #0f1428 100%);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .modal-header h3 {
+            color: var(--gold);
+            font-size: 22px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-height: auto;
+                border-right: none;
+                border-bottom: 2px solid var(--gold);
+                padding: 15px;
+            }
+
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .sidebar-item {
+                flex: 1;
+                min-width: 120px;
+                margin-bottom: 0;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .admin-content {
+                padding: 20px 15px;
+            }
+
+            .panel-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 8px;
+            }
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state h3 {
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .image-preview {
+            max-width: 200px;
+            margin-top: 10px;
+            border-radius: 6px;
+            border: 2px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">RP Admin</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item">
+                    <a class="sidebar-link active" onclick="switchPanel('dashboard')">Dashboard</a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" onclick="switchPanel('products')">Products</a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" onclick="switchPanel('categories')">Categories</a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" onclick="switchPanel('story')">Story</a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" onclick="switchPanel('orders')">Orders</a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" onclick="switchPanel('reviews')">Reviews</a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" onclick="switchPanel('settings')">Settings</a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" onclick="logout()">Logout</a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <h1 class="admin-title">Admin Dashboard</h1>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </header>
+
+            <!-- Content -->
+            <div class="admin-content">
+                <!-- Dashboard Panel -->
+                <div id="dashboard" class="panel active">
+                    <div class="panel-header">
+                        <h2>Dashboard</h2>
+                    </div>
+                    <p>Welcome to Royal Perfect Admin Panel. Select an option from the sidebar to manage your store.</p>
+                </div>
+
+                <!-- Products Panel -->
+                <div id="products" class="panel">
+                    <div class="panel-header">
+                        <h2>Products</h2>
+                        <button class="btn-primary" onclick="openProductModal()">Add Product</button>
+                    </div>
+                    <div id="products-list"></div>
+                </div>
+
+                <!-- Categories Panel -->
+                <div id="categories" class="panel">
+                    <div class="panel-header">
+                        <h2>Categories</h2>
+                        <button class="btn-primary" onclick="openCategoryModal()">Add Category</button>
+                    </div>
+                    <div id="categories-list"></div>
+                </div>
+
+                <!-- Story Panel -->
+                <div id="story" class="panel">
+                    <div class="panel-header">
+                        <h2>Story Content</h2>
+                        <button class="btn-primary" onclick="openStoryModal()">Add Story Section</button>
+                    </div>
+                    <div id="story-list"></div>
+                </div>
+
+                <!-- Orders Panel -->
+                <div id="orders" class="panel">
+                    <div class="panel-header">
+                        <h2>Orders</h2>
+                    </div>
+                    <div id="orders-list"></div>
+                </div>
+
+                <!-- Reviews Panel -->
+                <div id="reviews" class="panel">
+                    <div class="panel-header">
+                        <h2>Reviews</h2>
+                    </div>
+                    <div id="reviews-list"></div>
+                </div>
+
+                <!-- Settings Panel -->
+                <div id="settings" class="panel">
+                    <div class="panel-header">
+                        <h2>Settings</h2>
+                    </div>
+                    <div id="settings-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Product</h3>
+                <button class="modal-close" onclick="closeModal('product-modal')">×</button>
+            </div>
+            <form onsubmit="saveProduct(event)">
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="product-category" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="product-description" rows="4"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Price</label>
+                    <input type="number" id="product-price" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Offer Price (Optional)</label>
+                    <input type="number" id="product-offer-price" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Product Images</label>
+                    <input type="file" id="product-images" accept="image/*" multiple>
+                </div>
+                <div class="form-group">
+                    <label>Product Videos (Optional)</label>
+                    <input type="file" id="product-videos" accept="video/*" multiple>
+                </div>
+                <button type="submit" class="btn-primary">Save Product</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Category</h3>
+                <button class="modal-close" onclick="closeModal('category-modal')">×</button>
+            </div>
+            <form onsubmit="saveCategory(event)">
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" id="category-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="category-description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Category Image</label>
+                    <input type="file" id="category-image" accept="image/*">
+                </div>
+                <button type="submit" class="btn-primary">Save Category</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="story-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add/Edit Story Section</h3>
+                <button class="modal-close" onclick="closeModal('story-modal')">×</button>
+            </div>
+            <form onsubmit="saveStory(event)">
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="story-title" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="story-description" rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Image</label>
+                    <input type="file" id="story-image" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>Section Order</label>
+                    <input type="number" id="story-order" value="1">
+                </div>
+                <button type="submit" class="btn-primary">Save Story</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/supabase.js"></script>
+    <script src="js/cloudinary.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
